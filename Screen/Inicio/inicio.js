@@ -1,43 +1,49 @@
-import { ScrollView } from "react-native";
+import { ScrollView, StatusBar} from "react-native";
 import { View, StyleSheet } from "react-native";
-import CardComponents from "../../components/CardComponents";
+import CardComponent from "../../components/CardComponent  ";
 
 export default function Inicio() {
   return (
-    <ScrollView>
+           <ScrollView>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>BIENVENIDOS</Text>
+                <Text style={styles.Subtitle}>Estado <Text style={styles.StatusText}> Habilitado</Text></Text>
+                <Text style={styles.Subtitle}>Selecciona una Opcion</Text>
+             </View> 
+             
       <View style={styles.gridContainer}>
         
-        <CardComponents
+        <CardComponent
           tittle="Pacientes"
           description="Gestión de pacientes."
           icon="person-outline"
         />
 
-        <CardComponents
+        <CardComponent
           tittle="Médicos"
           description="Gestión de médicos."
           icon="medkit-outline"
         />
 
-        <CardComponents
+        <CardComponent
           tittle="Consultorios"
           description="Gestión de consultorios."
           icon="business-outline"
         />
 
-        <CardComponents
+        <CardComponent
           tittle="Especialidades"
           description="Gestión de especialidades médicas."
           icon="list-outline"
         />
 
-        <CardComponents
+        <CardComponent
           tittle="Recepcionistas"
           description="Gestión de recepcionistas."
           icon="people-outline"
         />
 
-        <CardComponents
+        <CardComponent
           tittle="Citas"
           description="Gestión de citas médicas."
           icon="calendar-outline"
