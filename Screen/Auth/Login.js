@@ -1,24 +1,42 @@
-import { TextInput, Text, View, StyleSheet, Image } from "react-native";
+import { TextInput, Text, View, StyleSheet, Image, Alert } from "react-native";
 import BottonComponent from "../../components/BottonComponents";
 import { useState } from "react";
+import { loginUser } from "../../Src/Services/AuthService";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // es para saber si estamos esperando algo o si estamos cargando algo 
+
+  const handleLogin =async()=>{
+    setLoading(true);
+    try {
+      const result = await loginUser(email, password);
+      if (result.success){
+        Alert.alert("Exito", "Inicio de sesion exitoso",[
+        {Text: "Ok", onPress: () => console.log ("Login exitoso, redirigiendo automaticamente........")},
+        ]);  
+      }else{
+        Alert.alert("Error de Login", result.message || "Ocurrio un error al inciar sesion", );
+      }
+    } catch (error) {
+      console.error("Error inesperado en login:", error);
+      Alert.alert("Error", "Ocurrio un error inesperado al intentar iniciar sesion");
+    }finally {
+      setLoading>(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      {/* Imagen médica ilustrativa */}
-      
-
+    
       {/* Título y subtítulo */}
       <Text style={styles.titulo}>🏥 Citas Médicas</Text>
       <Text style={styles.subtitulo}>Inicia sesión para continuar</Text>
 
       {/* Inputs */}
       <TextInput
-        style={styles.input}
+        style={styles.input} 
         placeholder=" @ Correo electrónico"
         value={email}
         onChangeText={setEmail}
@@ -36,7 +54,7 @@ export default function Login({ navigation }) {
       />
 
       {/* Botones */}
-      <BottonComponent title="✅ Iniciar Sesión" />
+      <BottonComponent title="✅ Iniciar Sesión"  onPress={handleLogin} disabled={!loading}/>
 
       <BottonComponent
         title="📝 ¿No tienes cuenta? Regístrate"
@@ -63,7 +81,7 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#0A74DA", // Azul principal
+    color: "#0A74DA", 
     marginBottom: 6,
     textAlign: "center",
   },

@@ -1,21 +1,21 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CardComponent({ title, description, icon, onPress }) {
+
+export default function CardComponents({ tittle, description, icon, color = "#4a90e2", onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <View style={styles.iconContainer}>
+      <View style={[styles.iconContainer, { backgroundColor: color }]}>
         <Ionicons name={icon} size={32} color="#ffffff" />
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.tittle}>{tittle}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   card: {
     width: '45%',

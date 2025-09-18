@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { registerUser } from '../../Src/Services/AuthService';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView } from 'react-native';
 import BottonComponent from '../..//components/BottonComponents';
 
@@ -13,6 +14,43 @@ export default function Registro({ navigation }) {
   const [rh, setRh] = useState('');
   const [nacionalidad, setNacionalidad] = useState('');
   const [password, setPassword] = useState('');
+   const [loading, setLoading] = useState(false);
+
+  const handleRegister = async () => {
+    setLoading(true);
+  const userData = {
+    nombre,
+    apellido,
+    documento,
+    telefono,
+    email,
+    fechaNacimiento,
+    genero,
+    rh,
+    nacionalidad,
+    password,
+  };
+
+  try {
+    const result = await registerUser(userData);
+
+    if (result.success) {
+      Alert.alert("Éxito", "Registro exitoso", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Login"), //  redirige al login
+        },
+      ]);
+    } else {
+      Alert.alert("Error", result.message || "Ocurrió un error en el registro");
+    }
+  } catch (error) {
+    Alert.alert("Error", "Error inesperado en el registro");
+    console.error(error);
+  }
+  setLoading>(false);
+};
+
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -99,10 +137,11 @@ export default function Registro({ navigation }) {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+            editable={!loading}
         />
 
         {/* Botones */}
-        <BottonComponent title="Registrarse" />
+        <BottonComponent title="Registrarse"  onPress={handleRegister} disabled={!loading} />
 
         <BottonComponent
           title="¿Ya tienes cuenta? Inicia Sesión"
