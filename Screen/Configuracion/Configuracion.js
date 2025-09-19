@@ -1,7 +1,24 @@
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ConfiguracionMedica() {
+
+
+export default function ConfiguracionMedica({navigation}) {
+
+
+  const handleLogout = async () => {
+  try {
+    await AsyncStorage.removeItem("userToken"); // eliminar token o sesión
+    Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente", [
+      { text: "OK", onPress: () => navigation.replace("login") },
+    ]);
+  } catch (error) {
+    console.error("Error al cerrar sesión", error);
+  }
+};
+
+
   return (
     <ScrollView style={styles.container}>
       {/* ================= ENCABEZADO ================= */}
@@ -63,6 +80,12 @@ export default function ConfiguracionMedica() {
         <TouchableOpacity style={styles.optionCard}>
           <Ionicons name="help-circle-outline" size={28} color="#EF4444" />
           <Text style={styles.optionText}>Ayuda y Soporte</Text>
+        </TouchableOpacity>
+         <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#FEE2E2" }]}
+             onPress={handleLogout}
+        >
+          <Ionicons name="log-out-outline" size={28} color="#EF4444" />
+          <Text style={styles.optionText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -13,7 +13,7 @@ export default function Login({ navigation }) {
     try {
       const result = await loginUser(email, password);
       if (result.success){
-        Alert.alert("Exito", "Inicio de sesion exitoso",[
+        Alert.alert("Exito", "Inicio de sesion exioso",[
         {Text: "Ok", onPress: () => console.log ("Login exitoso, redirigiendo automaticamente........")},
         ]);  
       }else{

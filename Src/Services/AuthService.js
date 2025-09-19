@@ -13,6 +13,7 @@ export const loginUser= async(email, password) => {
             console.log("No se recibio el token en la respuesta");
         }  
         return { success: true, token};   
+
     }catch(error){
         console.error("Error al iniciar sesion:", error.response ? error.response.data : error.message);
        
@@ -26,7 +27,14 @@ export const loginUser= async(email, password) => {
 export const registerUser = async (userData) => {
   try {
     const response = await api.post('/registrar', userData); //  endpoint de el backend
+    const token = response.data.token
     console.log("Respuesta del servidor (registro):", response.data);
+      if (token) {
+            await AsyncStorage.setItem("userToken", token);
+        }else{
+            console.log("No se recibio el token en la respuesta");
+        }  
+          
 
     return { success: true, data: response.data };
   } catch (error) {

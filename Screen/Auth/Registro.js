@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { registerUser } from '../../Src/Services/AuthService';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import BottonComponent from '../..//components/BottonComponents';
 
 export default function Registro({ navigation }) {
-  const [nombre, setNombre] = useState('');
+  const [name, setName] = useState('');
   const [apellido, setApellido] = useState('');
   const [documento, setDocumento] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -14,12 +14,13 @@ export default function Registro({ navigation }) {
   const [rh, setRh] = useState('');
   const [nacionalidad, setNacionalidad] = useState('');
   const [password, setPassword] = useState('');
+  const [roles, setRol] = useState('');
    const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
     setLoading(true);
   const userData = {
-    nombre,
+    name,
     apellido,
     documento,
     telefono,
@@ -29,26 +30,32 @@ export default function Registro({ navigation }) {
     rh,
     nacionalidad,
     password,
+    roles,
   };
 
   try {
     const result = await registerUser(userData);
-
-    if (result.success) {
-      Alert.alert("Éxito", "Registro exitoso", [
+   if (result.success) {
+    Alert.alert(
+      "Éxito",
+      "Registro exitoso, ya puedes ver la página principal",
+      [
         {
           text: "OK",
-          onPress: () => navigation.navigate("Login"), //  redirige al login
+          onPress: () => navigation.navigate("Inicio"),
         },
-      ]);
-    } else {
-      Alert.alert("Error", result.message || "Ocurrió un error en el registro");
-    }
-  } catch (error) {
-    Alert.alert("Error", "Error inesperado en el registro");
-    console.error(error);
+      ]
+    );
+  } else {
+    Alert.alert("Error", result.message || "Ocurrió un error en el registro");
   }
-  setLoading>(false);
+} catch (error) {
+  Alert.alert("Error", "Error inesperado en el registro");
+  console.error(error);
+} finally {
+  setLoading(false); 
+}
+  
 };
 
 
@@ -66,8 +73,8 @@ export default function Registro({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder=" Nombre"
-          value={nombre}
-          onChangeText={setNombre}
+          value={name}
+          onChangeText={setName}
         />
 
         <TextInput
@@ -98,7 +105,7 @@ export default function Registro({ navigation }) {
           placeholder="Correo electrónico"
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
+          
           autoCapitalize="none"
         />
 
@@ -137,7 +144,14 @@ export default function Registro({ navigation }) {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-            editable={!loading}
+          editable={!loading}
+        />
+         <TextInput
+          style={styles.input}
+          placeholder=" Rol"
+          value={roles}
+          onChangeText={setRol}
+          
         />
 
         {/* Botones */}

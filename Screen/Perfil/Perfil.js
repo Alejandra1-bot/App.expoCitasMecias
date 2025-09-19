@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../Src/Services/Conexion";
+import React, {useState} from "react";
 
 export default function Perfil  () {
   const [usuario, setUsuario] = useState(null);
@@ -13,7 +14,7 @@ export default function Perfil  () {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) {
-          Alert.alert("No se encontri el token de usuario, redirigiendo al login");
+          Alert.alert("No se encontro el token de usuario, redirigiendo al login");
           return;
         }
         const response = await api.get("/me");
