@@ -5,7 +5,7 @@ import { loginUser } from "../../Src/Services/AuthService";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("");  
   const [loading, setLoading] = useState(false); // es para saber si estamos esperando algo o si estamos cargando algo 
 
   const handleLogin =async()=>{

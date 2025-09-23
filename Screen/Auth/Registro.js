@@ -62,8 +62,6 @@ export default function Registro({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        
-       
         <Text style={styles.title}>🩺 Crear cuenta</Text>
         <Text style={styles.subtitle}>
           Regístrate en <Text style={styles.appName}>MediCitas</Text> y lleva el control de tus citas médicas 💊.

@@ -3,9 +3,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../Src/Services/Conexion";
-import React, {useState} from "react";
+import  {useState} from "react";
 
-export default function Perfil  () {
+export default function Perfil  ({navigation}) {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando]= useState(true);
 
@@ -84,41 +84,26 @@ export default function Perfil  () {
   }
 
   return(
-     <View style={styles.container}>
-      <Text style={styles.errorText}> Perfil de Usuario</Text>
-      <View style={styles.containerPerfil}>
-        <Text style={styles.label}>Nombre: {usuario.user.name || "No disponible"}</Text>
-        <Text style={styles.label}>Correo: {usuario.user.email || "No disponible"}</Text>
-      </View>
-     </View>
-     
-
-  )
-
-  
-  return (
-    <ScrollView style={styles.container}>
+       <ScrollView style={styles.container}>
       {/* ================= ENCABEZADO ================= */}
       <View style={styles.header}>
         <Image
           source={{ uri: "https://cdn-icons-png.flaticon.com/512/2922/2922510.png" }}
           style={styles.photo}
         />
-        <Text style={styles.headerTitle}>Perfil del Paciente</Text>
+        <Text style={styles.errorText}>Perfil del Paciente</Text>
         <Text style={styles.status}>Paciente Activo 🏥</Text>
       </View>
-
+    
       {/* ================= DATOS PERSONALES ================= */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Datos Personales</Text>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>👤 Nombre: Juan Perez</Text>
-          <Text style={styles.infoText}>📧 Correo: juanperez@correo.com</Text>
-          <Text style={styles.infoText}>📅 Edad: 35 años</Text>
-        </View>
+         <View style={styles.containerPerfil}>
+        <Text style={styles.label}>👤Nombre: {usuario.user.name || "No disponible"}</Text>
+        <Text style={styles.label}>📧Correo: {usuario.user.email || "No disponible"}</Text>
       </View>
-
-      {/* ================= INFORMACIÓN MÉDICA ================= */}
+     </View>
+       {/* ================= INFORMACIÓN MÉDICA ================= */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Información Médica</Text>
         <View style={styles.medicalBox}>
@@ -131,7 +116,8 @@ export default function Perfil  () {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ajustes de Perfil</Text>
 
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#DBEAFE" }]}>
+        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#DBEAFE" }]}
+          onPress={() => navigation.navigate("Citas")}>
           <Ionicons name="calendar-outline" size={28} color="#2563EB" />
           <Text style={styles.optionText}>Ver Citas</Text>
         </TouchableOpacity>
@@ -145,18 +131,14 @@ export default function Perfil  () {
           <Ionicons name="create-outline" size={28} color="#F59E0B" />
           <Text style={styles.optionText}>Editar Perfil</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#FEE2E2" }]}
-             onPress={handleLogout}
-        >
-          <Ionicons name="log-out-outline" size={28} color="#EF4444" />
-          <Text style={styles.optionText}>Cerrar Sesión</Text>
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+   
+
+       </ScrollView>
+     
+
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 6,
   },
-  headerTitle: {
+  errorText: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#FFFFFF",
@@ -198,7 +180,7 @@ const styles = StyleSheet.create({
     color: "#374151",
     marginBottom: 10,
   },
-  infoBox: {
+  containerPerfil: {
     backgroundColor: "#E0F2FE",
     padding: 15,
     borderRadius: 15,
@@ -215,6 +197,14 @@ const styles = StyleSheet.create({
     color: "#374151",
     marginBottom: 8,
   },
+    label: {
+    fontSize: 16,
+        borderRadius: 15,
+
+    color: "#374151",
+    marginBottom: 6,
+  },
+
   optionCard: {
     flexDirection: "row",
     alignItems: "center",

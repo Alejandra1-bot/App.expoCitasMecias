@@ -18,6 +18,7 @@ export default function NavegacionPrincipal() {
           height: 60,
           paddingBottom: 5,
           paddingTop: 5,
+            marginBottom: 6, 
         }, 
         // colores de los iconos y texto de la pestaña
         tabBarActiveTintColor: "#0A74DA",
@@ -26,6 +27,7 @@ export default function NavegacionPrincipal() {
           fontSize: 12,
           fontWeight: "bold",
           marginTop: 2,
+        
         },
       }}
     >
