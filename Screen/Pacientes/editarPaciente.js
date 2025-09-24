@@ -1,159 +1,150 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import {View,TextInput,TouchableOpacity, Text, StyleSheet, ScrollView,KeyboardAvoidingView, Platform, Alert,} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { crearPaciente, editarPaciente } from "../../Src/Services/PacienteService";
 
-export default function EditarPaciente({ route, navigation }) {
-  const { paciente, onSave } = route.params || {};
+export default function EditarPaciente() {
+  const navegation = useNavigation();
+  const route = useRoute();
+
+  const paciente = route.params ?.paciente;
 
   const [Nombre, setNombre] = useState(paciente ? paciente.Nombre : "");
   const [Apellido, setApellido] = useState(paciente ? paciente.Apellido : "");
   const [Documento, setDocumento] = useState(paciente ? paciente.Documento : "");
   const [Telefono, setTelefono] = useState(paciente ? paciente.Telefono : "");
   const [Email, setEmail] = useState(paciente ? paciente.Email : "");
-  const [Fecha_nacimiento, setFechaNacimiento] = useState(
-    paciente ? paciente.Fecha_nacimiento : ""
-  );
+  const [Fecha_nacimiento, setFechaNacimiento] = useState(paciente ? paciente.Fecha_nacimiento : "");
   const [Genero, setGenero] = useState(paciente ? paciente.Genero : "");
   const [RH, setRH] = useState(paciente ? paciente.RH : "");
-  const [Nacionalidad, setNacionalidad] = useState(
-    paciente ? paciente.Nacionalidad : ""
-  );
+  const [Nacionalidad, setNacionalidad] = useState(paciente ? paciente.Nacionalidad : "");
+  const [loading, setLoading] = useState(false);
 
-  const handleGuardar = () => {
-    if (!Nombre || !Apellido || !Documento || !Telefono || !Email) {
-      alert("⚠️ Completa todos los campos obligatorios");
+  const esEdicion = !!paciente; // es true si estamos editando
+
+  const handleGuardar = async () => {
+    if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !Fecha_nacimiento || !Genero || !RH || !Nacionalidad) {
+      Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
     }
-    const nuevoPaciente = paciente
-      ? {
-          ...paciente,
+    setLoading(true);
+    try {
+      let result;
+      if (esEdicion) {
+        result = await editarPaciente(paciente.id, {
           Nombre,
           Apellido,
-          Documento,
+          Documento,  
           Telefono,
           Email,
           Fecha_nacimiento,
           Genero,
           RH,
           Nacionalidad,
-        }
-      : {
+        });
+      } else {
+         result = await crearPaciente({
           Nombre,
           Apellido,
-          Documento,
-          Telefono,
+          Documento,  
+          Telefono, 
           Email,
           Fecha_nacimiento,
           Genero,
           RH,
           Nacionalidad,
-        };
-
-    if (onSave) {
-      onSave(nuevoPaciente); // solo si viene definido
+        });
+      }  
+      if (result.success) {
+        Alert.alert("Exito", esEdicion ? "Paciente actualizado" : "Paciente creado correctamente");
+        navegation.goBack(); // se devuelve a la pantalla anterior
+      } else {
+        Alert.alert("Error", result.message || "no se pudo guardar el paciente");
+      }
+    } catch (error) {
+      Alert.alert("Error", "No se pudo guardar el Paciente");
+    }finally {
+      setLoading(false);
     }
+  }
 
-    alert("✅ Paciente guardado con éxito");
-    navigation.goBack();
-  };
-
+  
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.container}>
-        {/* Encabezado */}
-        <View style={styles.header}>
-          <Ionicons name="person-add-outline" size={60} color="#fff" />
-          <Text style={styles.headerTitle}>Agregar / Editar Paciente</Text>
-          <Text style={styles.headerSubtitle}>
-            ✍️ Completa los datos del paciente
-          </Text>
-        </View>
+      <ScrollView>
+        <View style={styles.container}>
+            <Text style={styles.headerTitle}> {esEdicion ? "Editar paciente" : "Nuevo Paciente "}</Text>
 
-        {/* Formulario */}
-        <ScrollView
-          style={styles.form}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: 40 }}
-        >
-          <TextInput
-            style={styles.input}
-            placeholder=" Nombre"
-            value={Nombre}
-            onChangeText={setNombre}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Apellido"
-            value={Apellido}
-            onChangeText={setApellido}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Documento"
-            value={Documento}
-            onChangeText={setDocumento}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Teléfono"
-            value={Telefono}
-            onChangeText={setTelefono}
-            keyboardType="phone-pad"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Email"
-            value={Email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Fecha de nacimiento (YYYY-MM-DD)"
-            value={Fecha_nacimiento}
-            onChangeText={setFechaNacimiento}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Género"
-            value={Genero}
-            onChangeText={setGenero}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Grupo RH"
-            value={RH}
-            onChangeText={setRH}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder=" Nacionalidad"
-            value={Nacionalidad}
-            onChangeText={setNacionalidad}
-          />
+          {/* Formulario */}
+        
+            <TextInput
+              style={styles.input}
+              placeholder=" Nombre"
+              value={Nombre}
+              onChangeText={setNombre}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Apellido"
+              value={Apellido}
+              onChangeText={setApellido}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Documento"
+              value={Documento}
+              onChangeText={setDocumento}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Teléfono"
+              value={Telefono}
+              onChangeText={setTelefono}
+              keyboardType="phone-pad"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Email"
+              value={Email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Fecha de nacimiento (YYYY-MM-DD)"
+              value={Fecha_nacimiento}
+              onChangeText={setFechaNacimiento}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Género"
+              value={Genero}
+              onChangeText={setGenero}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Grupo RH"
+              value={RH}
+              onChangeText={setRH}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder=" Nacionalidad"
+              value={Nacionalidad}
+              onChangeText={setNacionalidad}
 
-          <TouchableOpacity style={styles.button} onPress={handleGuardar}>
-            <Ionicons name="save-outline" size={22} color="#fff" />
-            <Text style={styles.buttonText}>Guardar Paciente</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </KeyboardAvoidingView>
-  );
-}
+            />
+
+              <TouchableOpacity style={styles.button} onPress={handleGuardar} disabled={loading}>
+                <Ionicons name="save-outline" size={22} color="#fff" />
+                <Text style={styles.buttonText}> {esEdicion ? "Guardar Cambios" : "Crear Paciente"} </Text>
+              </TouchableOpacity> 
+              </View>
+
+            </ScrollView> 
+    )
+  }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F9FAFB" },
@@ -167,9 +158,11 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   headerTitle: {
+    alignItems: "center",
+    justifyContent: "center",
     fontSize: 22,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#110e0eff",
     marginTop: 10,
   },
   headerSubtitle: { fontSize: 14, color: "#E5E7EB", marginTop: 5 },
@@ -199,3 +192,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+
+

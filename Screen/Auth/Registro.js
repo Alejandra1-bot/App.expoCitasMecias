@@ -16,9 +16,8 @@ export default function Registro({ navigation }) {
   const [password, setPassword] = useState('');
   const [roles, setRol] = useState('');
    const [loading, setLoading] = useState(false);
-
-  const handleRegister = async () => {
-    setLoading(true);
+const handleRegister = async () => {
+  setLoading(true);
   const userData = {
     name,
     apellido,
@@ -35,29 +34,43 @@ export default function Registro({ navigation }) {
 
   try {
     const result = await registerUser(userData);
-   if (result.success) {
-    Alert.alert(
-      "Éxito",
-      "Registro exitoso, ya puedes ver la página principal",
-      [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("Inicio"),
-        },
-      ]
-    );
-  } else {
-    Alert.alert("Error", result.message || "Ocurrió un error en el registro");
-  }
-} catch (error) {
-  Alert.alert("Error", "Error inesperado en el registro");
-  console.error(error);
-} finally {
-  setLoading(false); 
-}
-  
-};
 
+    if (result.success) {
+      // ✅ Ahora, hacemos login automáticamente
+      const loginResult = await loginUser(email, password);
+
+      if (loginResult.success) {
+        // Aquí puedes guardar el token si tu login lo devuelve
+        // Ejemplo con AsyncStorage:
+        // await AsyncStorage.setItem("token", loginResult.token);
+
+        Alert.alert("Éxito", "Registro exitoso, redirigiendo al inicio", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Inicio"),
+          },
+        ]);
+      } else {
+        Alert.alert(
+          "Error",
+          "Registro exitoso, pero fallo el inicio de sesión automático"
+        );
+      }
+    } else {
+      let errorMessage =
+        typeof result.message === "string"
+          ? result.message
+          : JSON.stringify(result.message);
+
+      Alert.alert("Error", errorMessage || "Ocurrió un error en el registro");
+    }
+  } catch (error) {
+    Alert.alert("Error", "Error inesperado en el registro");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
