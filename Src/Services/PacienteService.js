@@ -13,7 +13,7 @@ export const listarPacientes= async () => {
         };
     }  
 }
-
+ 
 export const eliminarPaciente = async (id) => {
     try {
         await api.delete(`/eliminarPacientes/${id}`);

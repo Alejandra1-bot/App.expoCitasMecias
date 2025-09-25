@@ -19,6 +19,7 @@ export default function EditarPaciente() {
   const [Genero, setGenero] = useState(paciente ? paciente.Genero : "");
   const [RH, setRH] = useState(paciente ? paciente.RH : "");
   const [Nacionalidad, setNacionalidad] = useState(paciente ? paciente.Nacionalidad : "");
+  const [password, setPassword] = useState(""); // nueva variable de estado para la contraseña
   const [loading, setLoading] = useState(false);
 
   const esEdicion = !!paciente; // es true si estamos editando
@@ -42,6 +43,7 @@ export default function EditarPaciente() {
           Genero,
           RH,
           Nacionalidad,
+          password,
         });
       } else {
          result = await crearPaciente({
@@ -54,6 +56,7 @@ export default function EditarPaciente() {
           Genero,
           RH,
           Nacionalidad,
+          password,
         });
       }  
       if (result.success) {
@@ -135,6 +138,14 @@ export default function EditarPaciente() {
               onChangeText={setNacionalidad}
 
             />
+                <TextInput
+                    style={styles.input}
+                    placeholder=" ** Contraseña"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                    editable={!loading}
+                  />
 
               <TouchableOpacity style={styles.button} onPress={handleGuardar} disabled={loading}>
                 <Ionicons name="save-outline" size={22} color="#fff" />
