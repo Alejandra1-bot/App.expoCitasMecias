@@ -1,15 +1,13 @@
-import { View, Text, Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
-export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
-  const navigation = useNavigation();
-  const inicial = consultorio.Nombre ? consultorio.Nombre.charAt(0).toUpperCase() : "?";
+export default function EspecialidadCard({ especialidad, onEdit, onDelete, onPress }) {
+  const inicial = especialidad.Nombre ? especialidad.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={styles.card}
-      onPress={() => navigation.navigate("DetalleConsultorio", { consultorio })}
+      onPress={onPress} //  al presionar abre DetalleEspecialidad
     >
       {/* Avatar */}
       <View style={styles.avatar}>
@@ -18,25 +16,15 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
 
       {/* Info */}
       <View style={styles.info}>
-        <Text style={styles.nombre}>{consultorio.Nombre}</Text>
+        <Text style={styles.nombre}>{especialidad.Nombre}</Text>
 
         <View style={styles.row}>
-          <Ionicons name="location-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Direccion}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="business-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Ciudad}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Telefono}</Text>
+          <Ionicons name="document-text-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {especialidad.Descripcion}</Text>
         </View>
       </View>
 
-      {/* Botones */}
+      {/* Botones Editar / Eliminar */}
       <View style={styles.actions}>
         <Pressable
           onPress={onEdit}
@@ -60,7 +48,7 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
           <Ionicons name="trash-outline" size={18} color="#fff" />
         </Pressable>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

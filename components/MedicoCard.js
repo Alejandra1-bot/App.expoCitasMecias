@@ -2,14 +2,14 @@ import { View, Text, Pressable, StyleSheet, TouchableOpacity } from "react-nativ
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
+export default function MedicoCard({ medico, onEdit, onDelete }) {
   const navigation = useNavigation();
-  const inicial = consultorio.Nombre ? consultorio.Nombre.charAt(0).toUpperCase() : "?";
+  const inicial = medico.Nombre ? medico.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate("DetalleConsultorio", { consultorio })}
+      onPress={() => navigation.navigate("DetalleMedico", { medico })}
     >
       {/* Avatar */}
       <View style={styles.avatar}>
@@ -18,21 +18,33 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
 
       {/* Info */}
       <View style={styles.info}>
-        <Text style={styles.nombre}>{consultorio.Nombre}</Text>
+        <Text style={styles.nombre}>
+          {medico.Nombre} {medico.Apellido}
+        </Text>
 
         <View style={styles.row}>
-          <Ionicons name="location-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Direccion}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="business-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Ciudad}</Text>
+          <Ionicons name="card-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {medico.Documento}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Telefono}</Text>
+          <Text style={styles.detalle}> {medico.Telefono}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="mail-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {medico.Email}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="business-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> Consultorio ID: {medico.idConsultorio}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="medkit-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> Especialidad ID: {medico.idEspecialidad}</Text>
         </View>
       </View>
 

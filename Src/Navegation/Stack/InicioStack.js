@@ -1,7 +1,7 @@
 import { createNativeStackNavigator} from '@react-navigation/native-stack'
  import  Inicio from "../../../Screen/Inicio/inicio"
  import PacientesStack from './PacientesStack';
- import ConcultoriosStack from './ConsultoriosStack';
+ import ConsultoriosStack from './ConsultoriosStack';
  import MedicosStack from './MedicosStack';
  import EspecialidadesStack from './EspecialidadesStack';
  import RecepcionistasStack from './RecepcionistasStack';
@@ -27,8 +27,8 @@ export default function InicioStack(){
 
         
           <Stack.Screen
-            name="ConcultoriosFlow"
-            component={ConcultoriosStack}   
+            name="ConsultoriosFlow"
+            component={ConsultoriosStack}   
             options={{ headerShown: false }}
         />
 

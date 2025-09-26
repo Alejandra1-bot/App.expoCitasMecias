@@ -1,13 +1,198 @@
-import { View, Text} from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { crearMedico, editarMedico } from "../../Src/Services/MedicoService";
 
-export default function EditarMedico (){
+export default function EditarMedico() {
+  const navegation = useNavigation();
+  const route = useRoute();
 
-    return(
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text>Editar medico</Text>
+  const medico = route.params?.medico;
 
+  const [Nombre, setNombre] = useState(medico ? medico.Nombre : "");
+  const [Apellido, setApellido] = useState(medico ? medico.Apellido : "");
+  const [Documento, setDocumento] = useState(medico ? medico.Documento : "");
+  const [Telefono, setTelefono] = useState(medico ? medico.Telefono : "");
+  const [Email, setEmail] = useState(medico ? medico.Email : "");
+  const [Password, setPassword] = useState(""); // contraseña
+  const [idConsultorio, setIdConsultorio] = useState(
+    medico ? String(medico.idConsultorio) : ""
+  );
+  const [idEspecialidad, setIdEspecialidad] = useState(
+    medico ? String(medico.idEspecialidad) : ""
+  );
 
-        </View>
-    )
+  const [loading, setLoading] = useState(false);
 
+  const esEdicion = !!medico;
+
+  const handleGuardar = async () => {
+    if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !idConsultorio || !idEspecialidad) {
+      Alert.alert("Error", "Por favor, completa todos los campos.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let result;
+      if (esEdicion) {
+        result = await editarMedico(medico.id, {
+          Nombre,
+          Apellido,
+          Documento,
+          Telefono,
+          Email,
+          Password,
+          idConsultorio,
+          idEspecialidad,
+        });
+      } else {
+        result = await crearMedico({
+          Nombre,
+          Apellido,
+          Documento,
+          Telefono,
+          Email,
+          Password,
+          idConsultorio,
+          idEspecialidad,
+        });
+      }
+
+      if (result.success) {
+        Alert.alert("Éxito", esEdicion ? "Médico actualizado" : "Médico creado correctamente");
+        navegation.goBack();
+      } else {
+        Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar el médico");   
+    }
+s
+    } catch (error) {
+      Alert.alert("Error", "No se pudo guardar el médico");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.headerTitle}>
+          {esEdicion ? "Editar Médico" : "Nuevo Médico"}
+        </Text>
+
+        {/* Formulario */}
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={Nombre}
+          onChangeText={setNombre}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Apellido"
+          value={Apellido}
+          onChangeText={setApellido}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Documento"
+          value={Documento}
+          onChangeText={setDocumento}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Teléfono"
+          value={Telefono}
+          onChangeText={setTelefono}
+          keyboardType="phone-pad"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={Email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          secureTextEntry
+          value={Password}
+          onChangeText={setPassword}
+          editable={!loading}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="ID Consultorio"
+          value={idConsultorio}
+          onChangeText={setIdConsultorio}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="ID Especialidad"
+          value={idEspecialidad}
+          onChangeText={setIdEspecialidad}
+          keyboardType="numeric"
+        />
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleGuardar}
+          disabled={loading}
+        >
+          <Ionicons name="save-outline" size={22} color="#fff" />
+          <Text style={styles.buttonText}>
+            {esEdicion ? "Guardar Cambios" : "Crear Médico"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F9FAFB" },
+  headerTitle: {
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#110e0eff",
+    marginTop: 10,
+  },
+  input: {
+    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#10B981",
+    padding: 15,
+    borderRadius: 500,
+    justifyContent: "center",
+    marginTop: 2,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: "600",
+  },
+});

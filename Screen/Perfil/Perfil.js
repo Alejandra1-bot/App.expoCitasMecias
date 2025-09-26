@@ -116,20 +116,16 @@ export default function Perfil  ({navigation}) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ajustes de Perfil</Text>
 
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#DBEAFE" }]}
-          onPress={() => navigation.navigate("Citas")}>
-          <Ionicons name="calendar-outline" size={28} color="#2563EB" />
-          <Text style={styles.optionText}>Ver Citas</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("CitasPaciente")}>
+          <Text>Ver Citas</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#DCFCE7" }]}>
-          <Ionicons name="document-text-outline" size={28} color="#10B981" />
-          <Text style={styles.optionText}>Historial Médico</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("HistorialMedico")}>
+          <Text>Historial Médico</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#FEF3C7" }]}>
-          <Ionicons name="create-outline" size={28} color="#F59E0B" />
-          <Text style={styles.optionText}>Editar Perfil</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("EditarPerfil")}>
+          <Text>Editar Perfil</Text>
         </TouchableOpacity>
       </View>
    

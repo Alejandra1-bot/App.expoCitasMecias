@@ -1,11 +1,14 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function PacienteCard({ paciente, onEdit, onDelete }) {
+export default function PacienteCard({ paciente, onEdit, onDelete, onPress }) {
   const inicial = paciente.Nombre ? paciente.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
-    <View style={styles.card}>
+    <Pressable
+      style={styles.card}
+      onPress={onPress} // 👉 al presionar la tarjeta abre DetallePaciente
+    >
       {/* Avatar */}
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>{inicial}</Text>
@@ -13,7 +16,9 @@ export default function PacienteCard({ paciente, onEdit, onDelete }) {
 
       {/* Info */}
       <View style={styles.info}>
-        <Text style={styles.nombre}>{paciente.Nombre} {paciente.Apellido}</Text>
+        <Text style={styles.nombre}>
+          {paciente.Nombre} {paciente.Apellido}
+        </Text>
 
         <View style={styles.row}>
           <Ionicons name="card-outline" size={16} color="#555" />
@@ -29,24 +34,9 @@ export default function PacienteCard({ paciente, onEdit, onDelete }) {
           <Ionicons name="mail-outline" size={16} color="#555" />
           <Text style={styles.detalle}> {paciente.Email}</Text>
         </View>
-
-        <View style={styles.row}>
-          <Ionicons name="calendar-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Fecha_nacimiento}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="man-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Genero} | Rh: {paciente.RH}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="flag-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Nacionalidad}</Text>
-        </View>
       </View>
 
-      {/* Botones */}
+      {/* Botones Editar / Eliminar */}
       <View style={styles.actions}>
         <Pressable
           onPress={onEdit}
@@ -70,7 +60,7 @@ export default function PacienteCard({ paciente, onEdit, onDelete }) {
           <Ionicons name="trash-outline" size={18} color="#fff" />
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

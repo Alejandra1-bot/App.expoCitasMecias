@@ -19,7 +19,7 @@ export default function PacientesStack(){
                 options={{ title: 'Detalle de  cita'}}      
             />
             <Stack.Screen       
-                name="EditaCita"        
+                name="EditarCita"        
                 component={EditaCita}   
                 options={{ title: 'Editar cita' }}      
             />

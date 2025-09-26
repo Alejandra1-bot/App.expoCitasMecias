@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { registerUser } from '../../Src/Services/AuthService';
+import { loginUser, registerUser } from '../../Src/Services/AuthService';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import BottonComponent from '../..//components/BottonComponents';
 
@@ -47,7 +47,7 @@ const handleRegister = async () => {
         Alert.alert("Éxito", "Registro exitoso, redirigiendo al inicio", [
           {
             text: "OK",
-            onPress: () => navigation.navigate("Inicio"),
+            onPress: () => navigation.navigate("InicioPantalla"),
           },
         ]);
       } else {
@@ -166,7 +166,7 @@ const handleRegister = async () => {
         />
 
         {/* Botones */}
-        <BottonComponent title="Registrarse"  onPress={handleRegister} disabled={!loading} />
+        <BottonComponent title="Registrarse"  onPress={handleRegister} disabled={loading} />
 
         <BottonComponent
           title="¿Ya tienes cuenta? Inicia Sesión"

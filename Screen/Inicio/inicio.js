@@ -29,6 +29,7 @@ export default function Inicio({ navigation }) {
           description="Gestión de médicos."
           icon="medkit-outline"
           color="#10B981"
+           onPress={() => navigation.navigate("MedicosFlow")}
         />
 
         <CardComponents
@@ -36,6 +37,7 @@ export default function Inicio({ navigation }) {
           description="Gestión de consultorios."
           icon="business-outline"
           color="#8B5CF6"
+           onPress={() => navigation.navigate("ConsultoriosFlow")}
         />
 
         <CardComponents
@@ -43,6 +45,7 @@ export default function Inicio({ navigation }) {
           description="Gestión de especialidades médicas."
           icon="list-outline"
           color="#F59E0B"
+           onPress={() => navigation.navigate("EspecialidadesFlow")}
         />
 
         <CardComponents
@@ -50,6 +53,7 @@ export default function Inicio({ navigation }) {
           description="Gestión de recepcionistas."
           icon="people-outline"
           color="#06B6D4"
+           onPress={() => navigation.navigate("RecepcionistasFlow")}
         />
 
         <CardComponents
@@ -57,6 +61,7 @@ export default function Inicio({ navigation }) {
           description="Gestión de citas médicas."
           icon="calendar-outline"
           color="#EF4444"
+           onPress={() => navigation.navigate("CitasFlow")}
         />
       </View>
     </ScrollView>
