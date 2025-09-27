@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./Conexion";
 
-export const loginUser= async(email, password) => {
+export const loginUser= async(Email, password) => {
     try {
-         const response = await api.post('/login', {email, password});
+         const response = await api.post('/login', {Email, password});
          const token = response.data.token
          console.log("Respuesta del servidro:", response.data);
          console.log("Token recibido:", token);

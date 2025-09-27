@@ -1,7 +1,7 @@
 // Src/Services/PerfilService.js
 import axios from "axios";
 
-const API_URL = "http://192.168.101.78:8000/api/perfil"; // cambia a la ruta real de tu backend
+const API_URL = "http://10.2.232.142:8000/api/perfil"; // cambia a la ruta real de tu backend
 
 // ✅ Obtener perfil del usuario autenticado
 export const obtenerPerfil = async () => {

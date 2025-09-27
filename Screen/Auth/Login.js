@@ -4,21 +4,25 @@ import { useState } from "react";
 import { loginUser } from "../../Src/Services/AuthService";
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState("");
+  const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");  
   const [loading, setLoading] = useState(false); // es para saber si estamos esperando algo o si estamos cargando algo 
 
   const handleLogin =async()=>{
     setLoading(true);
     try {
-      const result = await loginUser(email, password);
+      const result = await loginUser(Email, password);
       if (result.success){
         Alert.alert("Exito", "Inicio de sesion exioso",[
         {Text: "Ok", onPress: () => console.log ("Login exitoso, redirigiendo automaticamente........")},
         ]);  
       }else{
-        Alert.alert("Error de Login", result.message || "Ocurrio un error al inciar sesion", );
-      }
+          Alert.alert(
+            "Error de Login",
+            typeof result.message === "string"
+              ? result.message
+              : result.message?.message || JSON.stringify(result.message) || "Ocurrió un error al iniciar sesión"
+          );      }
     } catch (error) {
       console.error("Error inesperado en login:", error);
       Alert.alert("Error", "Ocurrio un error inesperado al intentar iniciar sesion");
@@ -38,7 +42,7 @@ export default function Login({ navigation }) {
       <TextInput
         style={styles.input} 
         placeholder=" @ Correo electrónico"
-        value={email}
+        value={Email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -54,7 +58,7 @@ export default function Login({ navigation }) {
       />
 
       {/* Botones */}
-      <BottonComponent title="✅ Iniciar Sesión"  onPress={handleLogin} disabled={!loading}/>
+      <BottonComponent title="✅ Iniciar Sesión"  onPress={handleLogin} disabled={loading}/>
 
       <BottonComponent
         title="📝 ¿No tienes cuenta? Regístrate"

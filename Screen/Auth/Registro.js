@@ -4,30 +4,30 @@ import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert } from 'rea
 import BottonComponent from '../..//components/BottonComponents';
 
 export default function Registro({ navigation }) {
-  const [name, setName] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [documento, setDocumento] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [email, setEmail] = useState('');
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [genero, setGenero] = useState('');
-  const [rh, setRh] = useState('');
-  const [nacionalidad, setNacionalidad] = useState('');
+  const [Nombre, setName] = useState('');
+  const [Apellido, setApellido] = useState('');
+  const [Documento, setDocumento] = useState('');
+  const [Telefono, setTelefono] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Fecha_nacimiento, setFechaNacimiento] = useState('');
+  const [Genero, setGenero] = useState('');
+  const [RH, setRh] = useState('');
+  const [Nacionalidad, setNacionalidad] = useState('');
   const [password, setPassword] = useState('');
   const [roles, setRol] = useState('');
    const [loading, setLoading] = useState(false);
 const handleRegister = async () => {
   setLoading(true);
   const userData = {
-    name,
-    apellido,
-    documento,
-    telefono,
-    email,
-    fechaNacimiento,
-    genero,
-    rh,
-    nacionalidad,
+    Nombre,
+    Apellido,
+    Documento,
+    Telefono,
+    Email,
+    Fecha_nacimiento,
+    Genero,
+    RH,
+    Nacionalidad,
     password,
     roles,
   };
@@ -37,7 +37,7 @@ const handleRegister = async () => {
 
     if (result.success) {
       // ✅ Ahora, hacemos login automáticamente
-      const loginResult = await loginUser(email, password);
+      const loginResult = await loginUser(Email, password);
 
       if (loginResult.success) {
         // Aquí puedes guardar el token si tu login lo devuelve
@@ -58,10 +58,9 @@ const handleRegister = async () => {
       }
     } else {
       let errorMessage =
-        typeof result.message === "string"
-          ? result.message
-          : JSON.stringify(result.message);
-
+  typeof result.message === "string"
+    ? result.message
+    : result.message?.message || JSON.stringify(result.message);
       Alert.alert("Error", errorMessage || "Ocurrió un error en el registro");
     }
   } catch (error) {
@@ -84,21 +83,21 @@ const handleRegister = async () => {
         <TextInput
           style={styles.input}
           placeholder=" Nombre"
-          value={name}
+          value={Nombre}
           onChangeText={setName}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Apellido"
-          value={apellido}
+          value={Apellido}
           onChangeText={setApellido}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Documento"
-          value={documento}
+          value={Documento}
           onChangeText={setDocumento}
           keyboardType="numeric"
         />
@@ -106,7 +105,7 @@ const handleRegister = async () => {
         <TextInput
           style={styles.input}
           placeholder="Teléfono"
-          value={telefono}
+          value={Telefono}
           onChangeText={setTelefono}
           keyboardType="phone-pad"
         />
@@ -114,7 +113,7 @@ const handleRegister = async () => {
         <TextInput
           style={styles.input}
           placeholder="Correo electrónico"
-          value={email}
+          value={Email}
           onChangeText={setEmail}
           
           autoCapitalize="none"
@@ -123,14 +122,14 @@ const handleRegister = async () => {
         <TextInput
           style={styles.input}
           placeholder=" Fecha de nacimiento (YYYY-MM-DD)"
-          value={fechaNacimiento}
+          value={Fecha_nacimiento}
           onChangeText={setFechaNacimiento}
         />
 
         <TextInput
           style={styles.input}
           placeholder=" Género (M/F)"
-          value={genero}
+          value={Genero}
           onChangeText={setGenero}
           maxLength={1}
         />
@@ -138,14 +137,14 @@ const handleRegister = async () => {
         <TextInput
           style={styles.input}
           placeholder="RH (Ej: O+, A-)"
-          value={rh}
+          value={RH}
           onChangeText={setRh}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Nacionalidad"
-          value={nacionalidad}
+          value={Nacionalidad}
           onChangeText={setNacionalidad}
         />
 
