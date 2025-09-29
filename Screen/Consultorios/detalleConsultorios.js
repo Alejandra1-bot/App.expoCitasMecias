@@ -25,8 +25,9 @@ export default function DetalleConsultorio() {
         <Text style={styles.label}>📞 Teléfono:</Text>
         <Text style={styles.value}>{consultorio.Telefono}</Text>
 
-        <Text style={styles.label}>🏥 Piso:</Text>
-        <Text style={styles.value}>{consultorio.Piso}</Text>
+         <Text style={styles.label}>📞 Ciudad:</Text>
+        <Text style={styles.value}>{consultorio.Ciudad}</Text>
+
       </View>
 
       {/* Botón volver */}

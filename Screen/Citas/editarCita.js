@@ -20,7 +20,7 @@ export default function EditarCita() {
 
   const [Fecha_cita, setFechaCita] = useState(cita ? cita.Fecha_cita : "");
   const [Hora, setHora] = useState(cita ? cita.Hora : "");
-  const [Estado, setEstado] = useState(cita ? cita.Estado : "Pendiente");
+  const [Estado, setEstado] = useState(cita ? cita.Estado : "");
   const [idPaciente, setIdPaciente] = useState(cita ? String(cita.idPaciente) : "");
   const [idMedico, setIdMedico] = useState(cita ? String(cita.idMedico) : "");
   const [idResepcionista, setIdResepcionista] = useState(cita ? String(cita.idResepcionista) : "");
@@ -55,7 +55,7 @@ export default function EditarCita() {
         Alert.alert("Éxito", esEdicion ? "Cita actualizada" : "Cita creada correctamente");
         navigation.goBack();
       } else {
-       Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar el médico");  
+       Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar  la cita");  
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar la cita");
@@ -79,7 +79,7 @@ export default function EditarCita() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Hora (HH:MM:SS)"
+          placeholder="Hora (HH:MM)"
           value={Hora}
           onChangeText={setHora}
         />

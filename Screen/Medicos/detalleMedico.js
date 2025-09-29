@@ -21,14 +21,16 @@ export default function DetalleMedico() {
 
       {/* Información */}
       <View style={styles.infoBox}>
+        <Text style={styles.label}>📞 Documento:</Text>
+        <Text style={styles.value}>{medico.Documento}</Text>
+
         <Text style={styles.label}>📞 Teléfono:</Text>
         <Text style={styles.value}>{medico.Telefono}</Text>
 
         <Text style={styles.label}>📧 Email:</Text>
         <Text style={styles.value}>{medico.Email}</Text>
 
-        <Text style={styles.label}>🏥 Consultorio:</Text>
-        <Text style={styles.value}>{medico.Consultorio}</Text>
+       
       </View>
 
       {/* Botón volver */}

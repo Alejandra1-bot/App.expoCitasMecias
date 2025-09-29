@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
-export default function ConfiguracionMedica({navigation}) {
+export default function Configuracion({navigation}) {
 
 
   const handleLogout = async () => {
@@ -32,15 +32,25 @@ export default function ConfiguracionMedica({navigation}) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Opciones Generales</Text>
 
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="color-palette-outline" size={28} color="#2563EB" />
-          <Text style={styles.optionText}>Apariencia</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="globe-outline" size={28} color="#F59E0B" />
-          <Text style={styles.optionText}>Idioma</Text>
-        </TouchableOpacity>
+              <TouchableOpacity 
+        style={styles.optionCard} 
+        onPress={() => navigation.navigate("Apariencia")}
+>
+  <Ionicons name="color-palette-outline" size={28} color="#2563EB" />
+  <Text style={styles.optionText}>Apariencia</Text>
+</TouchableOpacity>
+
+<TouchableOpacity 
+  style={styles.optionCard} 
+  onPress={() => navigation.navigate("idioma")}
+>
+  <Ionicons name="globe-outline" size={28} color="#F59E0B" />
+  <Text style={styles.optionText}>Idioma</Text>
+</TouchableOpacity>
+
+
+       
 
         <TouchableOpacity style={styles.optionCard}>
           <Ionicons name="notifications-outline" size={28} color="#10B981" />
@@ -55,27 +65,8 @@ export default function ConfiguracionMedica({navigation}) {
 
       {/* ================= OPCIONES MÉDICAS ================= */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Gestión Médica</Text>
+        <Text style={styles.sectionTitle}>Configuracion Principal </Text>
 
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="calendar-outline" size={28} color="#2563EB" />
-          <Text style={styles.optionText}>Gestionar Citas</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="medkit-outline" size={28} color="#10B981" />
-          <Text style={styles.optionText}>Especialidades Médicas</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="people-outline" size={28} color="#F59E0B" />
-          <Text style={styles.optionText}>Doctores y Personal</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionCard}>
-          <Ionicons name="document-text-outline" size={28} color="#06B6D4" />
-          <Text style={styles.optionText}>Historial Médico</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionCard}>
           <Ionicons name="help-circle-outline" size={28} color="#EF4444" />

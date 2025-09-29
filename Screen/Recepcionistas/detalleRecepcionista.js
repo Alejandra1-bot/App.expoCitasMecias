@@ -26,6 +26,8 @@ export default function DetalleRecepcionista() {
 
         <Text style={styles.label}>📧 Email:</Text>
         <Text style={styles.value}>{recepcionista.Email}</Text>
+
+        
       </View>
 
       {/* Botón volver */}

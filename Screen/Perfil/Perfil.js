@@ -99,8 +99,8 @@ export default function Perfil  ({navigation}) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Datos Personales</Text>
          <View style={styles.containerPerfil}>
-        <Text style={styles.label}>👤Nombre: {usuario.user.name || "No disponible"}</Text>
-        <Text style={styles.label}>📧Correo: {usuario.user.email || "No disponible"}</Text>
+        <Text style={styles.label}>👤Nombre: {usuario.user.name || " Paola Gordillo"}</Text>
+        <Text style={styles.label}>📧Correo: {usuario.user.email || "paolagordillo87gmil.com"}</Text>
       </View>
      </View>
        {/* ================= INFORMACIÓN MÉDICA ================= */}
