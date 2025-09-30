@@ -11,7 +11,7 @@ export default function PerfilesStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="PerfilPantalla"
+        name="PerfilPantalla"j
         component={Perfil}
         options={{ headerShown: false }}
       />

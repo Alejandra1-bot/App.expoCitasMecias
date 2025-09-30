@@ -3,11 +3,13 @@ import { listarCitas, eliminarCita } from "../../Src/Services/CitasService";
 import { useNavigation } from "@react-navigation/native";
 import CitaCard from "../../components/CitaCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function ListarCitas() {
   const [citas, setCitas] = useState([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const { colors, texts } = useAppContext();
 
   const handleCitas = async () => {
     setLoading(true);
@@ -66,14 +68,14 @@ export default function ListarCitas() {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={[styles.centered, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList
         data={citas}
         keyExtractor={(item) => item.id.toString()}
@@ -85,11 +87,11 @@ export default function ListarCitas() {
             onPress={() => navigation.navigate("DetalleCita", { cita: item })}
           />
         )}
-        ListEmptyComponent={<Text style={styles.empty}>No hay Citas Registradas.</Text>}
+        ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noAppointments}</Text>}
       />
 
-      <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-        <Text style={styles.textBotton}>+ Nueva Cita</Text>
+      <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
+        <Text style={styles.textBotton}>{texts.newAppointment}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -105,10 +107,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: "#555",
   },
   botonCrear: {
-    backgroundColor: "#0a18d6ff",
     padding: 16,
     borderRadius: 30,
     margin: 16,

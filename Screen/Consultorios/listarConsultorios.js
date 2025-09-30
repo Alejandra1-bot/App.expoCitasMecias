@@ -3,11 +3,13 @@ import { listarConsultorios, eliminarConsultorio } from "../../Src/Services/Cons
 import { useNavigation } from "@react-navigation/native";
 import ConsultorioCard from "../../components/consultorioCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function ListarConsultorios (){
     const [consultorios, setConsultorios] = useState([]);
-    const navegation = useNavigation(); 
-    const [loading, setLoading] = useState(false); 
+    const navegation = useNavigation();
+    const [loading, setLoading] = useState(false);
+    const { colors, texts } = useAppContext();
 
     const handleConsultorios = async () =>{
       setLoading(true);
@@ -63,14 +65,14 @@ export default function ListarConsultorios (){
 
     if (loading) {
       return (
-        <View style={styles.centered}>  
-        <ActivityIndicator size="large" color="#0000ff" />
+        <View style={[styles.centered, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
         </View>
       );
     }
 
     return (
-      <View style={{flex: 1 }}>
+      <View style={{flex: 1, backgroundColor: colors.background }}>
         <FlatList
           data={consultorios}
           keyExtractor={(item) => item.id.toString()}
@@ -81,11 +83,11 @@ export default function ListarConsultorios (){
               onDelete={() => handleEliminar(item.id)}
             />
           )}
-          ListEmptyComponent={<Text style={styles.empty}> No hay Consultorios Registrados.</Text>}
+          ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noOffices}</Text>}
         />
 
-        <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-          <Text style={styles.textBotton}>+Nuevo Consultorio</Text>
+        <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
+          <Text style={styles.textBotton}>{texts.newOffice}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -94,17 +96,15 @@ export default function ListarConsultorios (){
 const styles = StyleSheet.create({
   centered:{
     flex: 1,
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
   },
   empty:{
-    textAlign: "center",  
+    textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: "#555",
   },
   botonCrear:{
-    backgroundColor: "#0a18d6ff",
     padding: 16,
     borderRadius: 30,
     margin: 16,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   textBotton:{
     color: "#fff",
-    fontSize: 18, 
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

@@ -1,38 +1,40 @@
 import { View, Text, Pressable, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useAppContext } from "../Screen/Configuracion/AppContext";
 
 export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
   const navigation = useNavigation();
+  const { colors } = useAppContext();
   const inicial = consultorio.Nombre ? consultorio.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
       onPress={() => navigation.navigate("DetalleConsultorio", { consultorio })}
     >
       {/* Avatar */}
-      <View style={styles.avatar}>
+      <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
         <Text style={styles.avatarText}>{inicial}</Text>
       </View>
 
       {/* Info */}
       <View style={styles.info}>
-        <Text style={styles.nombre}>{consultorio.Nombre}</Text>
+        <Text style={[styles.nombre, { color: colors.text }]}>{consultorio.Nombre}</Text>
 
         <View style={styles.row}>
-          <Ionicons name="location-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Direccion}</Text>
+          <Ionicons name="location-outline" size={16} color={colors.tabBarInactive} />
+          <Text style={[styles.detalle, { color: colors.text }]}> {consultorio.Direccion}</Text>
         </View>
 
         <View style={styles.row}>
-          <Ionicons name="business-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Ciudad}</Text>
+          <Ionicons name="business-outline" size={16} color={colors.tabBarInactive} />
+          <Text style={[styles.detalle, { color: colors.text }]}> {consultorio.Ciudad}</Text>
         </View>
 
         <View style={styles.row}>
-          <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {consultorio.Telefono}</Text>
+          <Ionicons name="call-outline" size={16} color={colors.tabBarInactive} />
+          <Text style={[styles.detalle, { color: colors.text }]}> {consultorio.Telefono}</Text>
         </View>
       </View>
 
@@ -42,7 +44,7 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
           onPress={onEdit}
           style={({ pressed }) => [
             styles.button,
-            styles.editBtn,
+            { backgroundColor: colors.secondary },
             pressed && styles.pressed,
           ]}
         >
@@ -53,7 +55,7 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
           onPress={onDelete}
           style={({ pressed }) => [
             styles.button,
-            styles.deleteBtn,
+            { backgroundColor: colors.danger },
             pressed && styles.pressed,
           ]}
         >
@@ -68,7 +70,6 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#f9fbff",
     borderRadius: 16,
     padding: 16,
     marginVertical: 8,
@@ -78,12 +79,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    borderWidth: 1,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#0a74da",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -100,7 +101,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     marginBottom: 6,
-    color: "#222",
   },
   row: {
     flexDirection: "row",
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
   detalle: {
     fontSize: 14,
-    color: "#444",
     marginLeft: 4,
   },
   actions: {
@@ -123,12 +122,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     elevation: 2,
-  },
-  editBtn: {
-    backgroundColor: "#0a18d6",
-  },
-  deleteBtn: {
-    backgroundColor: "#f20c0c",
   },
   pressed: {
     opacity: 0.7,

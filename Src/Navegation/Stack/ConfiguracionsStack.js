@@ -2,9 +2,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Configuracion from "../../../Screen/Configuracion/Configuracion";
 import Apariencia from "../../../Screen/Configuracion/Apariencia";
 import Idioma from "../../../Screen/Configuracion/idioma";
-// import Seguridad from "../../../Screen/Configuracion/Seguridad";
-// import Notificaciones from "../../../Screen/Configuracion/Notificaciones";
-// import Soporte from "../../../Screen/Configuracion/Soporte";
+import Seguridad from "../../../Screen/Configuracion/Seguridad";
+import Notificaciones from "../../../Screen/Configuracion/Notificaciones";
+import Soporte from "../../../Screen/Configuracion/Soporte";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,12 +25,12 @@ export default function ConfiguracionesStack() {
       <Stack.Screen
         name="idioma"
         component={Idioma}
-       
+
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Seguridad"
         component={Seguridad}
-       
+
       />
       <Stack.Screen
         name="Notificaciones"
@@ -39,8 +39,8 @@ export default function ConfiguracionesStack() {
       <Stack.Screen
         name="Soporte"
         component={Soporte}
-       
-      /> */}
+
+      />
     </Stack.Navigator>
   );
 }
