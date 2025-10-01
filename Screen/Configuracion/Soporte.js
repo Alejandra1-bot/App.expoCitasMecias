@@ -30,7 +30,7 @@ export default function Soporte() {
           Email: soporte@clinicamedica.com
         </Text>
         <Text style={[styles.infoText, { color: colors.text }]}>
-          Teléfono: +57 1 234 5678
+          Teléfono: +57 320-234- 5673
         </Text>
         <Text style={[styles.infoText, { color: colors.text }]}>
           Horario de atención: Lunes a Viernes, 8:00 AM - 6:00 PM

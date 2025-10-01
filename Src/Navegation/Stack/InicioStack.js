@@ -14,8 +14,8 @@ export default function InicioStack(){
     return(
         <Stack.Navigator>
         <Stack.Screen
-            name="InicioPantalla"
-            component={Inicio}   
+            name="Inicio"
+            component={Inicio}
             options={{ headerShown: false }}
         />
 

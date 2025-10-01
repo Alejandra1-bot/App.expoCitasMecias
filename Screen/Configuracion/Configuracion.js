@@ -11,9 +11,9 @@ export default function Configuracion({navigation}) {
   const handleLogout = async () => {
   try {
     await AsyncStorage.removeItem("userToken"); // eliminar token o sesión
-    Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente", [
-      { text: "OK", onPress: () => navigation.replace("login") },
-    ]);
+    Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente", 
+      
+  );
   } catch (error) {
     console.error("Error al cerrar sesión", error);
   }
@@ -76,7 +76,8 @@ export default function Configuracion({navigation}) {
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.mainConfig}</Text>
 
 
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("Soporte")}>
+        <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+         onPress={() => navigation.navigate("Soporte")}>
           <Ionicons name="help-circle-outline" size={28} color="#EF4444" />
           <Text style={[styles.optionText, { color: colors.text }]}>{texts.help}</Text>
         </TouchableOpacity>

@@ -47,7 +47,7 @@ const handleRegister = async () => {
         Alert.alert("Éxito", "Registro exitoso, redirigiendo al inicio", [
           {
             text: "OK",
-            onPress: () => navigation.navigate("InicioPantalla"),
+            onPress: () => navigation.navigate("Login"),
           },
         ]);
       } else {
