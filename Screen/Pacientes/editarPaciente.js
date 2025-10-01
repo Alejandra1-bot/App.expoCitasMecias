@@ -19,13 +19,13 @@ export default function EditarPaciente() {
   const [Genero, setGenero] = useState(paciente ? paciente.Genero : "");
   const [RH, setRH] = useState(paciente ? paciente.RH : "");
   const [Nacionalidad, setNacionalidad] = useState(paciente ? paciente.Nacionalidad : "");
-  const [Password, setPassword] = useState(""); // nueva variable de estado para la contraseña
+  const [password, setPassword] = useState(""); 
   const [loading, setLoading] = useState(false);
 
   const esEdicion = !!paciente; // es true si estamos editando
 
   const handleGuardar = async () => {
-    if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !Fecha_nacimiento || !Genero || !RH || !Nacionalidad || !Password) {
+    if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !Fecha_nacimiento || !Genero || !RH || !Nacionalidad || !password) {
       Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
     }
@@ -43,7 +43,7 @@ export default function EditarPaciente() {
           Genero,
           RH,
           Nacionalidad,
-          Password,
+          password,
         });
       } else {
          result = await crearPaciente({
@@ -56,15 +56,15 @@ export default function EditarPaciente() {
           Genero,
           RH,
           Nacionalidad,
-          Password,
+          password,
         });
       }  
       if (result.success) {
         Alert.alert("Exito", esEdicion ? "Paciente actualizado" : "Paciente creado correctamente");
         navegation.goBack(); // se devuelve a la pantalla anterior
       } else {
-       Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar el médico");  
-       }
+        Alert.alert(esEdicion ? "Error al editar el paciente" : "Error al crear el paciente", JSON.stringify(result.message));
+      }
       
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar el Paciente");
@@ -143,7 +143,7 @@ export default function EditarPaciente() {
                     style={styles.input}
                     placeholder=" ** Contraseña"
                     secureTextEntry
-                    value={Password}
+                    value={password}
                     onChangeText={setPassword}
                     editable={!loading}
                   />

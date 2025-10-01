@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL="http://192.168.101.78:8000/api";
+const API_BASE_URL="http://10.2.235.215:8000/api";
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -11,7 +11,7 @@ const api = axios.create({
      },
 });
 
-const RutasPublicas = ['/login', '/registrar']; //rutas de api que no requieren autenticacion
+const RutasPublicas = ['/login', '/registrar', '/actualizarMedicos']; //rutas de api que no requieren autenticacion
 
 api.interceptors.request.use(
 
@@ -38,10 +38,10 @@ api.interceptors.response.use(
         const originalRequest = error.config;
         const isRutaPublica = RutasPublicas.some(ruta => originalRequest.url.includes(ruta));
 
-        if (error.response && error.response.status === 401 && !originalRequest._retry && !isRutaPublica) { 
+        if (error.response && error.response.status === 401 && !originalRequest._retry && !isRutaPublica) {
             originalRequest._retry = true;
-            await AsyncStorage.removeItem("userToken"); // elimina el token guardado
-            console.log("Token expirado o no autorizado, Redirigiendo al login "); 
+            // await AsyncStorage.removeItem("userToken"); // elimina el token guardado
+            console.log("Token expirado o no autorizado, pero no se elimina el token");
         }
         return Promise.reject(error);
     }

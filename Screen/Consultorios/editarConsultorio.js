@@ -53,7 +53,7 @@ export default function EditarConsultorio() {
         Alert.alert("Éxito", esEdicion ? "Consultorio actualizado" : "Consultorio creado correctamente");
         navegation.goBack();
       } else {
-        Alert.alert("Error", result.message || "No se pudo guardar el consultorio");
+        Alert.alert(esEdicion ? "Error al editar el consultorio" : "Error al crear el consultorio", JSON.stringify(result.message));
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar el consultorio");

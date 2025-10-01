@@ -40,10 +40,10 @@ export const crearMedico = async (data) => {
     const response = await api.post("/CrearMedicos", data);
     return { success: true, data: response.data };
   } catch (error) {
-    console.error(
-      "Error al crear el médico:",
-      error.response ? error.response.data : error.message
-    );
+    // console.error(
+    //   "Error al crear el médico:",
+    //   error.response ? error.response.data : error.message
+    // );
     return {
       success: false,
       message: error.response ? error.response.data : "Error de conexión",
@@ -57,13 +57,13 @@ export const editarMedico = async (id, data) => {
     const response = await api.put(`/actualizarMedicos/${id}`, data);
     return { success: true, data: response.data };
   } catch (error) {
-    console.error(
-      "Error al editar el médico:",
-      error.response ? error.response.data : error.message
-    );
-    return {
-      success: false,
-      message: error.response ? error.response.data : "Error de conexión",
-    };
+      // console.error(
+      //   "Error al editar el médico:",
+      //   error.response ? error.response.data : error.message
+      // );
+      return {
+        success: false,
+        message: error.response ? error.response.data : "Error de conexión",
+      };
   }
 };

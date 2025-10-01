@@ -109,9 +109,6 @@ export default function Perfil  ({navigation}) {
         <Text style={styles.label}>❤️RH: {usuario.user.RH || "No disponible "}</Text>
         <Text style={styles.label}>🌍Nacionalidad: {usuario.user.Nacionalidad || "No disponible "}</Text>
 
-
-
-
       </View>
      </View>
        {/* ================= INFORMACIÓN MÉDICA ================= */}
@@ -127,17 +124,20 @@ export default function Perfil  ({navigation}) {
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.profileSettings}</Text>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("CitasPaciente")}>
+               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => navigation.navigate("CitasPaciente")}>
                  <Ionicons name="calendar-outline" size={24} color={colors.primary} />
                  <Text style={[styles.optionText, { color: colors.text }]}>{texts.viewAppointments}</Text>
                </TouchableOpacity>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("HistorialMedico")}>
+               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => navigation.navigate("HistorialMedico")}>
                  <Ionicons name="document-text-outline" size={24} color={colors.primary} />
                  <Text style={[styles.optionText, { color: colors.text }]}>{texts.medicalHistory}</Text>
                </TouchableOpacity>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("EditarPerfil", { usuario })}>
+               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => navigation.navigate("EditarPerfil", { usuario })}>
                  <Ionicons name="create-outline" size={24} color={colors.primary} />
                  <Text style={[styles.optionText, { color: colors.text }]}>{texts.editProfile}</Text>
                </TouchableOpacity>

@@ -32,24 +32,24 @@ export const crearPaciente = async (data) => {
         const response = await api.post("/CrearPacientes", data );   
         return { success: true, data: response.data };
     } catch (error) {
-        console.error("Error al crear el paciente:", error.response ? error.response.data : error.message);
+        // console.error("Error al crear el paciente:", error.response ? error.response.data : error.message);
         return {
             success: false,
             message: error.response ? error.response.data : "Error de conexion ",
         };
-    }   
+    }
 };
 export const editarPaciente = async (id, data) => {
     try {
         const response = await api.put(`/actualizarPacientes/${id}`, data);
         return { success: true, data: response.data };
     } catch (error) {
-        console.error("Error al editar el paciente:", error.response ? error.response.data : error.message);
+        // console.error("Error al editar el paciente:", error.response ? error.response.data : error.message);
         return {
             success: false,
             message: error.response ? error.response.data : "Error de conexion ",
         };
-    }           
+    }
 };
 
 

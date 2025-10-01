@@ -16,7 +16,7 @@ export default function EditarPerfil() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  // 📌 Suponemos que recibes el usuario actual desde params
+ 
   const usuario = route.params?.usuario;
 
   const [nombre, setNombre] = useState(usuario ? usuario.Nombre : "");

@@ -57,7 +57,7 @@ export default function ListarPacientes (){
 
                   handlePacientes();
                 } else {
-                   Alert.alert("Error ", result.message || "No se pudo eliminar el paciente");  
+                 Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar el médico");  
                 }                 
               } catch (error) {
                 Alert.alert("Error ", "No se pudo eliminar el paciente"); 
@@ -97,6 +97,7 @@ export default function ListarPacientes (){
 
         <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
           <Text style={styles.textBotton}>+Nuevo Paciente</Text>
+
         </TouchableOpacity>
       </View>
 

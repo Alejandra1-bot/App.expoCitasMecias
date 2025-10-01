@@ -1,4 +1,4 @@
-import { TextInput, Text, View, StyleSheet, Image, Alert } from "react-native";
+import { TextInput, Text, View, StyleSheet, Image, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import BottonComponent from "../../components/BottonComponents";
 import { useState } from "react";
 import { loginUser } from "../../Src/Services/AuthService";
@@ -14,8 +14,8 @@ export default function Login({ navigation }) {
       const result = await loginUser(Email, password);
       if (result.success){
         Alert.alert("Exito", "Inicio de sesion exioso",[
-        {Text: "Ok", onPress: () => console.log ("Login exitoso, redirigiendo automaticamente........")},
-        ]);  
+        {text: "Ok", onPress: () => console.log ("Login exitoso, redirigiendo automaticamente........")},
+        ]);
       }else{
           Alert.alert(
             "Error de Login",
@@ -27,15 +27,19 @@ export default function Login({ navigation }) {
       console.error("Error inesperado en login:", error);
       Alert.alert("Error", "Ocurrio un error inesperado al intentar iniciar sesion");
     }finally {
-      setLoading>(false);
+      setLoading(false);
     }
   }
 
   return (
-    <View style={styles.container}>
-    
-      {/* Título y subtítulo */}
-      <Text style={styles.titulo}>🏥 Citas Médicas</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <View style={styles.innerContainer}>
+        {/* Título y subtítulo */}
+        <Text style={styles.titulo}>🏥 Citas Médicas</Text>
       <Text style={styles.subtitulo}>Inicia sesión para continuar</Text>
 
       {/* Inputs */}
@@ -65,14 +69,18 @@ export default function Login({ navigation }) {
         onPress={() => navigation.navigate("Registro")}
         style={{ backgroundColor: "#0A2647" }} // azul oscuro secundario
       />
-    </View>
-  );
+      </View>
+    </KeyboardAvoidingView>
+ );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F9FF", // Fondo claro suave
+  },
+  innerContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,

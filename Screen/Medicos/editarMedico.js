@@ -72,9 +72,8 @@ export default function EditarMedico() {
         Alert.alert("Éxito", esEdicion ? "Médico actualizado" : "Médico creado correctamente");
         navegation.goBack();
       } else {
-        Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar el médico");   
-    }
-s
+        Alert.alert(esEdicion ? "Error al editar el médico" : "Error al crear el médico", JSON.stringify(result.message));
+      }
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar el médico");
     } finally {

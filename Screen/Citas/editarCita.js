@@ -7,6 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -65,8 +67,13 @@ export default function EditarCita() {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.innerContainer}>
         <Text style={styles.headerTitle}>
           {esEdicion ? "Editar Cita Médica" : "Nueva Cita Médica"}
         </Text>
@@ -117,13 +124,15 @@ export default function EditarCita() {
             {esEdicion ? "Guardar Cambios" : "Crear Cita"}
           </Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F9FAFB", padding: 16 },
+  container: { flex: 1, backgroundColor: "#F9FAFB" },
+  innerContainer: { padding: 16 },
   headerTitle: {
     fontSize: 22,
     fontWeight: "bold",

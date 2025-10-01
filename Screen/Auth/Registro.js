@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginUser, registerUser } from '../../Src/Services/AuthService';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import BottonComponent from '../..//components/BottonComponents';
 
 export default function Registro({ navigation }) {
@@ -72,8 +72,13 @@ const handleRegister = async () => {
 };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.innerContainer}>
         <Text style={styles.title}>🩺 Crear cuenta</Text>
         <Text style={styles.subtitle}>
           Regístrate en <Text style={styles.appName}>MediCitas</Text> y lleva el control de tus citas médicas 💊.
@@ -172,22 +177,26 @@ const handleRegister = async () => {
           onPress={() => navigation.navigate('Login')}
           style={{ backgroundColor: '#0A2647' }}
         />
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     backgroundColor: '#EAF6FF',
-    alignItems: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
+  },
+  innerContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   image: {
     width: 140,
