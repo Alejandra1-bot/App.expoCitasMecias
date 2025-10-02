@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAppContext } from "../Screen/Configuracion/AppContext";
 
-export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
+export default function ConsultorioCard({ consultorio, onEdit, onDelete, userRole }) {
   const navigation = useNavigation();
   const { colors } = useAppContext();
   const inicial = consultorio.Nombre ? consultorio.Nombre.charAt(0).toUpperCase() : "?";
@@ -39,29 +39,31 @@ export default function ConsultorioCard({ consultorio, onEdit, onDelete }) {
       </View>
 
       {/* Botones */}
-      <View style={styles.actions}>
-        <Pressable
-          onPress={onEdit}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: colors.secondary },
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </Pressable>
+      {userRole === 'administrador' && (
+        <View style={styles.actions}>
+          <Pressable
+            onPress={onEdit}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: colors.secondary },
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="create-outline" size={18} color="#fff" />
+          </Pressable>
 
-        <Pressable
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: colors.danger },
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="trash-outline" size={18} color="#fff" />
-        </Pressable>
-      </View>
+          <Pressable
+            onPress={onDelete}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: colors.danger },
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="trash-outline" size={18} color="#fff" />
+          </Pressable>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

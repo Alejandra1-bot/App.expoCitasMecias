@@ -1,76 +1,37 @@
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, Alert, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../Src/Services/Conexion";
 import  {useState} from "react";
 import { useAppContext } from "../Configuracion/AppContext";
+import { listarCitas } from "../../Src/Services/CitasService";
+import CitaCard from "../../components/CitaCard";
 
 export default function Perfil  ({navigation}) {
-   const [usuario, setUsuario] = useState(null);
-   const [cargando, setCargando]= useState(true);
-   const { colors, texts } = useAppContext();
+    const [usuario, setUsuario] = useState(null);
+    const [cargando, setCargando]= useState(true);
+    const [citas, setCitas] = useState([]);
+    const { colors, texts, userRole, userId } = useAppContext();
 
   useEffect(() =>{
-    const cargarPerfil = async() => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) {
-          Alert.alert("No se encontro el token de usuario, redirigiendo al login");
-          return;
+    const cargarDatos = async () => {
+      setUsuario({ user: {} });
+      if (userRole === 'paciente') {
+        try {
+          const result = await listarCitas();
+          if (result.success) {
+            const filteredCitas = result.data.filter(cita => cita.idPaciente == userId);
+            setCitas(filteredCitas);
+          }
+        } catch (error) {
+          console.error("Error cargando citas:", error);
         }
-        const response = await api.get("/me");
-        setUsuario (response.data);
-      } catch (error) {
-        console.error("Error al cargar el perfil:", error);
-        if (error.isAuthError || error.shoulRedirecToLogin) {
-          console.log("Error de autenticacion manejando por el interceptor, redifigiendo al login");
-          return;  
-        }
-
-        if (error.response) {
-          Alert.alert("Error del servidor", `Error ${error.response.status}: ${error.response.data?.message || "Ocurrio un error al cargar el perfil"}`,
-            [
-              {
-                Text: "Ok",
-                onPress: async () =>{
-                   await AsyncStorage.removeItem("userToken");
-                }
-              }
-            ]
-          );
-        }else if (error.response){
-          Alert.alert("Error de conexion", "No se pudo conectar al servidor Verificar tu conexion a Internet",
-            [
-              {
-                 Text: "Ok",
-                onPress: async () =>{
-                   await AsyncStorage.removeItem("userToken");
-                }
-              }
-            ]
-          );
-        }else{
-          Alert.alert(
-            "Error ",
-            "Ocurrio un error inesperado al cargar el  perfil.",
-            [
-              {
-                 Text: "Ok",
-                onPress: async () =>{
-                   await AsyncStorage.removeItem("userToken");
-                }
-              }
-            ]
-          );
-        }
-      }finally{
-        setLoandig(false);
-
       }
+      setCargando(false);
     };
-    cargarPerfil();
-  },[]);
+    cargarDatos();
+  },[userRole, userId]);
 
   if (!usuario) {
     return(
@@ -86,65 +47,91 @@ export default function Perfil  ({navigation}) {
   }
 
   return(
-        <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+         <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* ================= ENCABEZADO ================= */}
       <View style={styles.header}>
         <Image
           source={{ uri: "https://cdn-icons-png.flaticon.com/512/2922/2922510.png" }}
           style={styles.photo}
         />
-        <Text style={styles.errorText}>{texts.patientProfile}</Text>
-        <Text style={styles.status}>{texts.activePatient}</Text>
+        <Text style={styles.errorText}>
+          {userRole === 'paciente' ? texts.patientProfile : userRole === '  medico' ? 'Perfil de medico' : 'Perfil de Administrador'}
+        </Text>
+        <Text style={styles.status}>
+          {userRole === 'paciente' ? texts.activePatient : userRole === 'Administrador' ? 'Médico Activo 🩺' : ' Administrador 👑'}
+        </Text>
       </View>
     
       {/* ================= DATOS PERSONALES ================= */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.personalData}</Text>
          <View style={styles.containerPerfil}>
-        <Text style={styles.label}>👤Nombre: {usuario.user.Nombre || " No disponible "}</Text>
-        <Text style={styles.label}>📧Correo: {usuario.user.Email || "No disponible "}</Text>
-        <Text style={styles.label}>📞Teléfono: {usuario.user.Telefono || "No disponible "}</Text  >
-        <Text style={styles.label}>📅Fecha de Nacimiento: {usuario.user.Fecha_nacimiento || "No disponible "}</Text>
-        <Text style={styles.label}>♉Genero: {usuario.user.Genero || "No disponible "}</Text>
-        <Text style={styles.label}>❤️RH: {usuario.user.RH || "No disponible "}</Text>
-        <Text style={styles.label}>🌍Nacionalidad: {usuario.user.Nacionalidad || "No disponible "}</Text>
+        <Text style={styles.label}>👤Nombre: {usuario.user.Nombre || "No disponible"}</Text>
+        <Text style={styles.label}>📧Correo: {usuario.user.Email || "No disponible"}</Text>
+        <Text style={styles.label}>📞Teléfono: {usuario.user.Telefono || "No disponible"}</Text>
+        {userRole === 'paciente' && (
+          <>
+            <Text style={styles.label}>📅Fecha de Nacimiento: {usuario.user.Fecha_nacimiento || "No disponible"}</Text>
+            <Text style={styles.label}>♉Género: {usuario.user.Genero || "No disponible"}</Text>
+            <Text style={styles.label}>❤️RH: {usuario.user.RH || "No disponible"}</Text>
+            <Text style={styles.label}>🌍Nacionalidad: {usuario.user.Nacionalidad || "No disponible"}</Text>
+          </>
+        )}
+        {userRole === 'medico' && (
+          <>
+            <Text style={styles.label}>🏥ID Consultorio: {usuario.user.idConsultorio || "No disponible"}</Text>
+            <Text style={styles.label}>🩺ID Especialidad: {usuario.user.idEspecialidad || "No disponible"}</Text>
+          </>
+        )}
 
       </View>
      </View>
-       {/* ================= INFORMACIÓN MÉDICA ================= */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.medicalInfo}</Text>
-        <View style={styles.medicalBox}>
-          <Text style={styles.infoText}>🩺 Médico Asignado: Dra. López</Text>
-          <Text style={styles.infoText}>👩‍💼 Recepcionista: María González</Text>
-        </View>
-      </View>
+
+     {/* ================= CITAS DEL PACIENTE ================= */}
+     {userRole === 'paciente' && (
+       <View style={styles.section}>
+         <Text style={[styles.sectionTitle, { color: colors.text }]}>Mis Citas</Text>
+         <FlatList
+           data={citas}
+           keyExtractor={(item) => item.id.toString()}
+           renderItem={({ item }) => (
+             <CitaCard
+               cita={item}
+               onPress={() => {}}
+             />
+           )}
+           ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>No hay citas registradas</Text>}
+         />
+       </View>
+     )}
 
       {/* ================= AJUSTES DE PERFIL ================= */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.profileSettings}</Text>
+      {userRole === 'medico' && (
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.profileSettings}</Text>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                onPress={() => navigation.navigate("CitasPaciente")}>
-                 <Ionicons name="calendar-outline" size={24} color={colors.primary} />
-                 <Text style={[styles.optionText, { color: colors.text }]}>{texts.viewAppointments}</Text>
-               </TouchableOpacity>
+                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                  onPress={() => navigation.navigate("CitasPaciente")}>
+                   <Ionicons name="calendar-outline" size={24} color={colors.primary} />
+                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.viewAppointments}</Text>
+                 </TouchableOpacity>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                onPress={() => navigation.navigate("HistorialMedico")}>
-                 <Ionicons name="document-text-outline" size={24} color={colors.primary} />
-                 <Text style={[styles.optionText, { color: colors.text }]}>{texts.medicalHistory}</Text>
-               </TouchableOpacity>
+                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                  onPress={() => navigation.navigate("HistorialMedico")}>
+                   <Ionicons name="document-text-outline" size={24} color={colors.primary} />
+                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.medicalHistory}</Text>
+                 </TouchableOpacity>
 
-               <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                onPress={() => navigation.navigate("EditarPerfil", { usuario })}>
-                 <Ionicons name="create-outline" size={24} color={colors.primary} />
-                 <Text style={[styles.optionText, { color: colors.text }]}>{texts.editProfile}</Text>
-               </TouchableOpacity>
-      </View>
+                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+                  onPress={() => navigation.navigate("EditarPerfil", { usuario })}>
+                   <Ionicons name="create-outline" size={24} color={colors.primary} />
+                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.editProfile}</Text>
+                 </TouchableOpacity>
+        </View>
+      )}
    
+</View>
 
-       </ScrollView>
      
 
   );
@@ -228,5 +215,10 @@ const styles = StyleSheet.create({
     color: "#111827",
     marginLeft: 12,
     fontWeight: "500",
+  },
+  empty: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });

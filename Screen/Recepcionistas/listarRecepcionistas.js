@@ -16,7 +16,7 @@ export default function ListarRecepcionistas() {
       if (result.success) {
         setRecepcionistas(result.data);
       } else {
-        Alert.alert("Error", result.message || "No se pudieron cargar los recepcionistas");
+         Alert.alert("Error", JSON.stringify(error.message));
       }
     } catch (error) {
       Alert.alert("Error", "No se pudieron cargar los recepcionistas");

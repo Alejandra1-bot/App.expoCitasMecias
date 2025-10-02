@@ -3,14 +3,16 @@ import { listarPacientes, eliminarPaciente } from "../../Src/Services/PacienteSe
 import { useNavigation } from "@react-navigation/native";
 import PacienteCard from "../../components/PacientesCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 
 
 
 export default function ListarPacientes (){
     const [pacientes, setPacientes] = useState([]);
-    const navegation = useNavigation(); 
-    const [loading, setLoading] = useState(false); 
+    const navegation = useNavigation();
+    const [loading, setLoading] = useState(false);
+    const { userRole } = useAppContext();
 
 
     const handlePacientes = async () =>{
@@ -20,7 +22,7 @@ export default function ListarPacientes (){
         if (result.success) {
           setPacientes(result.data);
         }else{
-          Alert.alert("Error ", result.message || "NO se pudieron cargar los pacientes");
+         Alert.alert("Error", JSON.stringify(error.message));
         }
       } catch (error) {
         Alert.alert("Error ", "NO se pudieron cargar los pacientes");
@@ -89,16 +91,18 @@ export default function ListarPacientes (){
               onEdit={() => handleEditar(item)}
               onDelete={() => handleEliminar(item.id)}
               onPress={() => navegation.navigate("DetallePaciente", { paciente: item })} // abre detalle
+              userRole={userRole}
             />
 
           )}
           ListEmptyComponent={<Text style={styles.empty}> No hay Pacientes Registrados.</Text>}
         />
 
-        <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-          <Text style={styles.textBotton}>+Nuevo Paciente</Text>
-
-        </TouchableOpacity>
+        {userRole === 'administrador' && (
+          <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+            <Text style={styles.textBotton}>+Nuevo Paciente</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
     );

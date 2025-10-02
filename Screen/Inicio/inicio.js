@@ -1,10 +1,14 @@
 import { ScrollView, StyleSheet, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CardComponents from "../../components/CardComponent";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function Inicio({ navigation }) {
+     const { colors, texts, userRole } = useAppContext();
+  
   return (
-    <ScrollView style={styles.container}>
+    
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* ================= ENCABEZADO ================= */}
       <View style={styles.header}>
         <Ionicons name="medkit-outline" size={52} color="#FACC15" />
@@ -16,53 +20,110 @@ export default function Inicio({ navigation }) {
 
       {/* ================= GRID DE TARJETAS ================= */}
       <View style={styles.gridContainer}>
-        <CardComponents
-          tittle="Pacientes"
-          description="Gestión de pacientes."
-          icon="person-outline"
-          color="#2563EB"
-          onPress={() => navigation.navigate("PacientesFlow")}
-        />
+        {userRole === 'administrador' ? (
+          <>
+            <CardComponents
+              key="pacientes"
+              tittle="Pacientes"
+              description="Gestión de pacientes."
+              icon="person-outline"
+              color="#2563EB"
+              onPress={() => navigation.navigate("PacientesFlow")}
+            />
 
-        <CardComponents
-          tittle="Médicos"
-          description="Gestión de médicos."
-          icon="medkit-outline"
-          color="#10B981"
-           onPress={() => navigation.navigate("MedicosFlow")}
-        />
+            <CardComponents
+              key="medicos"
+              tittle="Médicos"
+              description="Gestión de médicos."
+              icon="medkit-outline"
+              color="#10B981"
+              onPress={() => navigation.navigate("MedicosFlow")}
+            />
 
-        <CardComponents
-          tittle="Consultorios"
-          description="Gestión de consultorios."
-          icon="business-outline"
-          color="#8B5CF6"
-           onPress={() => navigation.navigate("ConsultoriosFlow")}
-        />
+            <CardComponents
+              key="consultorios"
+              tittle="Consultorios"
+              description="Gestión de consultorios."
+              icon="business-outline"
+              color="#8B5CF6"
+              onPress={() => navigation.navigate("ConsultoriosFlow")}
+            />
 
-        <CardComponents
-          tittle="Especialidades"
-          description="Gestión de especialidades médicas."
-          icon="list-outline"
-          color="#F59E0B"
-           onPress={() => navigation.navigate("EspecialidadesFlow")}
-        />
+            <CardComponents
+              key="especialidades"
+              tittle="Especialidades"
+              description="Gestión de especialidades médicas."
+              icon="list-outline"
+              color="#F59E0B"
+              onPress={() => navigation.navigate("EspecialidadesFlow")}
+            />
 
-        <CardComponents
-          tittle="Recepcionistas"
-          description="Gestión de recepcionistas."
-          icon="people-outline"
-          color="#06B6D4"
-           onPress={() => navigation.navigate("RecepcionistasFlow")}
-        />
+            <CardComponents
+              key="recepcionistas"
+              tittle="Recepcionistas"
+              description="Gestión de recepcionistas."
+              icon="people-outline"
+              color="#06B6D4"
+              onPress={() => navigation.navigate("RecepcionistasFlow")}
+            />
 
-        <CardComponents
-          tittle="Citas"
-          description="Gestión de citas médicas."
-          icon="calendar-outline"
-          color="#EF4444"
-           onPress={() => navigation.navigate("CitasFlow")}
-        />
+            <CardComponents
+              key="citas"
+              tittle="Citas"
+              description="Gestión de citas médicas."
+              icon="calendar-outline"
+              color="#EF4444"
+              onPress={() => navigation.navigate("CitasFlow")}
+            />
+          </>
+        ) : userRole === 'medico' ? (
+          <>
+            <CardComponents
+              key="consultorios"
+              tittle="Consultorios"
+              description="Ver consultorios."
+              icon="business-outline"
+              color="#8B5CF6"
+              onPress={() => navigation.navigate("ConsultoriosFlow")}
+            />
+
+            <CardComponents
+              key="especialidades"
+              tittle="Especialidades"
+              description="Ver especialidades médicas."
+              icon="list-outline"
+              color="#F59E0B"
+              onPress={() => navigation.navigate("EspecialidadesFlow")}
+            />
+
+            <CardComponents
+              key="recepcionistas"
+              tittle="Recepcionistas"
+              description="Ver recepcionistas."
+              icon="people-outline"
+              color="#06B6D4"
+              onPress={() => navigation.navigate("RecepcionistasFlow")}
+            />
+
+            <CardComponents
+              key="citas"
+              tittle="Citas"
+              description="Ver citas médicas."
+              icon="calendar-outline"
+              color="#EF4444"
+              onPress={() => navigation.navigate("CitasFlow")}
+            />
+          </>
+        ) : userRole === 'paciente' ? (
+          <CardComponents
+            key="citas"
+            tittle="Mis Citas"
+            description="Ver mis citas médicas."
+            icon="calendar-outline"
+            color="#EF4444"
+            onPress={() => navigation.navigate("CitasFlow")}
+          />
+        ) : null}
       </View>
     </ScrollView>
   );

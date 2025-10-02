@@ -75,6 +75,11 @@ export default function EditarPaciente() {
 
   
   return (
+        <KeyboardAvoidingView  //Contenedor que ajusta su comportamiento cuando aparece el teclado.
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+        >
       <ScrollView>
         <View style={styles.container}>
             <Text style={styles.headerTitle}> {esEdicion ? "Editar paciente" : "Nuevo Paciente "}</Text>
@@ -155,6 +160,7 @@ export default function EditarPaciente() {
               </View>
 
             </ScrollView> 
+            </KeyboardAvoidingView>
     )
   }
 

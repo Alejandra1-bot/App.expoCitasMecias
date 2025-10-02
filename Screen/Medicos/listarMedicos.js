@@ -1,13 +1,16 @@
-import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, StyleSheet,ScrollView  } from "react-native";
 import { listarMedicos, eliminarMedico } from "../../Src/Services/MedicoService";
 import { useNavigation } from "@react-navigation/native";
 import MedicoCard from "../../components/MedicoCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function ListarMedicos() {
-  const [medicos, setMedicos] = useState([]);
-  const navegation = useNavigation();
-  const [loading, setLoading] = useState(false);
+       const { colors, texts, userRole } = useAppContext();
+
+   const [medicos, setMedicos] = useState([]);
+   const navegation = useNavigation();
+   const [loading, setLoading] = useState(false);
 
   const handleMedicos = async () => {
     setLoading(true);
@@ -16,7 +19,7 @@ export default function ListarMedicos() {
       if (result.success) {
         setMedicos(result.data);
       } else {
-        Alert.alert("Error", result.message || "No se pudieron cargar los médicos");
+         Alert.alert("Error", JSON.stringify(error.message));
       }
     } catch (error) {
       Alert.alert("Error", "No se pudieron cargar los médicos");
@@ -73,6 +76,8 @@ export default function ListarMedicos() {
   }
 
   return (
+        // <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    
     <View style={{ flex: 1 }}>
       <FlatList
         data={medicos}
@@ -82,15 +87,19 @@ export default function ListarMedicos() {
             medico={item}
             onEdit={() => handleEditar(item)}
             onDelete={() => handleEliminar(item.id)}
+            userRole={userRole}
           />
         )}
         ListEmptyComponent={<Text style={styles.empty}>No hay Médicos Registrados.</Text>}
       />
 
-      <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-        <Text style={styles.textBotton}>+Nuevo Médico</Text>
-      </TouchableOpacity>
+      {userRole === 'administrador' && (
+        <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+          <Text style={styles.textBotton}>+Nuevo Médico</Text>
+        </TouchableOpacity>
+      )}
     </View>
+    // </ScrollView>
   );
 }
 

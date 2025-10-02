@@ -7,16 +7,20 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { crearMedico, editarMedico } from "../../Src/Services/MedicoService";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function EditarMedico() {
   const navegation = useNavigation();
   const route = useRoute();
 
   const medico = route.params?.medico;
+       const { colors, texts } = useAppContext();
 
   const [Nombre, setNombre] = useState(medico ? medico.Nombre : "");
   const [Apellido, setApellido] = useState(medico ? medico.Apellido : "");
@@ -82,6 +86,11 @@ export default function EditarMedico() {
   };
 
   return (
+        <KeyboardAvoidingView  //Contenedor que ajusta su comportamiento cuando aparece el teclado.
+              style={[styles.container, { backgroundColor: colors.background }]}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+            >
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.headerTitle}>
@@ -157,19 +166,19 @@ export default function EditarMedico() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F9FAFB" },
   headerTitle: {
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#110e0eff",
-    marginTop: 10,
-  },
+   fontSize: 22,
+   fontWeight: "bold",
+   color: "#110e0eff",
+   marginTop: 10,
+   textAlign: "center",
+ },
   input: {
     backgroundColor: "#fff",
     padding: 14,

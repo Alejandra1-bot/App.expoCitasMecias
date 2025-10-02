@@ -9,14 +9,21 @@ export default function ListarCitas() {
   const [citas, setCitas] = useState([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const { colors, texts } = useAppContext();
+  const { colors, texts, userRole, userId } = useAppContext();
 
   const handleCitas = async () => {
     setLoading(true);
     try {
       const result = await listarCitas();
       if (result.success) {
-        setCitas(result.data);
+        let filteredCitas = result.data;
+        if (userRole === 'paciente') {
+          filteredCitas = result.data.filter(cita => cita.idPaciente == userId);
+        } else if (userRole === 'medico') {
+          filteredCitas = result.data.filter(cita => cita.idMedico == userId);
+        }
+        // Admin ve todas
+        setCitas(filteredCitas);
       } else {
         Alert.alert("Error", result.message || "No se pudieron cargar las citas");
       }
@@ -90,9 +97,11 @@ export default function ListarCitas() {
         ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noAppointments}</Text>}
       />
 
-      <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
-        <Text style={styles.textBotton}>{texts.newAppointment}</Text>
-      </TouchableOpacity>
+      {userRole === 'administrador' && (
+        <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
+          <Text style={styles.textBotton}>{texts.newAppointment}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

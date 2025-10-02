@@ -6,8 +6,10 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [theme, setTheme] = useState("light");
   const [language, setLanguage] = useState("es"); // español por defecto
+  const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  // Cargar tema y idioma desde AsyncStorage al iniciar
+  // Cargar tema, idioma y rol desde AsyncStorage al iniciar
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -18,6 +20,14 @@ export const AppProvider = ({ children }) => {
         const savedLanguage = await AsyncStorage.getItem("language");
         if (savedLanguage) {
           setLanguage(savedLanguage);
+        }
+        const savedRole = await AsyncStorage.getItem("userRole");
+        if (savedRole) {
+          setUserRole(savedRole);
+        }
+        const savedUserId = await AsyncStorage.getItem("userId");
+        if (savedUserId) {
+          setUserId(savedUserId);
         }
       } catch (error) {
         console.error("Error loading settings:", error);
@@ -141,7 +151,7 @@ export const AppProvider = ({ children }) => {
   const currentTexts = texts[language];
 
   return (
-    <AppContext.Provider value={{ theme, setTheme: changeTheme, language, setLanguage: changeLanguage, colors: currentColors, texts: currentTexts }}>
+    <AppContext.Provider value={{ theme, setTheme: changeTheme, language, setLanguage: changeLanguage, userRole, setUserRole, userId, setUserId, colors: currentColors, texts: currentTexts }}>
       {children}
     </AppContext.Provider>
   );

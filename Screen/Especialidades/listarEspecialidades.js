@@ -16,7 +16,7 @@ export default function ListarEspecialidades() {
       if (result.success) {
         setEspecialidades(result.data);
       } else {
-        Alert.alert("Error", result.message || "No se pudieron cargar las especialidades");
+         Alert.alert("Error", JSON.stringify(error.message));
       }
     } catch (error) {
       Alert.alert("Error", "No se pudieron cargar las especialidades");

@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function PacienteCard({ paciente, onEdit, onDelete, onPress }) {
+export default function PacienteCard({ paciente, onEdit, onDelete, onPress, userRole }) {
   const inicial = paciente.Nombre ? paciente.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
@@ -37,29 +37,31 @@ export default function PacienteCard({ paciente, onEdit, onDelete, onPress }) {
       </View>
 
       {/* Botones Editar / Eliminar */}
-      <View style={styles.actions}>
-        <Pressable
-          onPress={onEdit}
-          style={({ pressed }) => [
-            styles.button,
-            styles.editBtn,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </Pressable>
+      {userRole === 'administrador' && (
+        <View style={styles.actions}>
+          <Pressable
+            onPress={onEdit}
+            style={({ pressed }) => [
+              styles.button,
+              styles.editBtn,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="create-outline" size={18} color="#fff" />
+          </Pressable>
 
-        <Pressable
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.button,
-            styles.deleteBtn,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="trash-outline" size={18} color="#fff" />
-        </Pressable>
-      </View>
+          <Pressable
+            onPress={onDelete}
+            style={({ pressed }) => [
+              styles.button,
+              styles.deleteBtn,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="trash-outline" size={18} color="#fff" />
+          </Pressable>
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -135,3 +137,4 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.95 }],
   },
 });
+

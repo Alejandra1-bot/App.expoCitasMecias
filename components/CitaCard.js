@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAppContext } from "../Screen/Configuracion/AppContext";
 
 export default function CitaCard({ cita, onEdit, onDelete, onPress }) {
-  const { colors } = useAppContext();
+  const { colors, userRole } = useAppContext();
   const inicial = cita.Estado ? cita.Estado.charAt(0).toUpperCase() : "?";
 
   return (
@@ -52,29 +52,31 @@ export default function CitaCard({ cita, onEdit, onDelete, onPress }) {
       </View>
 
       {/* Botones Editar / Eliminar */}
-      <View style={styles.actions}>
-        <Pressable
-          onPress={onEdit}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: colors.secondary },
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </Pressable>
+      {userRole === 'administrador' && (
+        <View style={styles.actions}>
+          <Pressable
+            onPress={onEdit}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: colors.secondary },
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="create-outline" size={18} color="#fff" />
+          </Pressable>
 
-        <Pressable
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: colors.danger },
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="trash-outline" size={18} color="#fff" />
-        </Pressable>
-      </View>
+          <Pressable
+            onPress={onDelete}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: colors.danger },
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="trash-outline" size={18} color="#fff" />
+          </Pressable>
+        </View>
+      )}
     </Pressable>
   );
 }

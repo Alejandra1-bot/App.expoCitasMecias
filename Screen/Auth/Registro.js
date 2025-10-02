@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { loginUser, registerUser } from '../../Src/Services/AuthService';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import BottonComponent from '../..//components/BottonComponents';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import BottonComponent from '../../components/BottonComponents';
 
 export default function Registro({ navigation }) {
   const [Nombre, setName] = useState('');
@@ -15,8 +16,22 @@ export default function Registro({ navigation }) {
   const [Nacionalidad, setNacionalidad] = useState('');
   const [password, setPassword] = useState('');
   const [roles, setRol] = useState('');
+  const [idConsultorio, setIdConsultorio] = useState('');
+  const [idEspecialidad, setIdEspecialidad] = useState('');
    const [loading, setLoading] = useState(false);
 const handleRegister = async () => {
+  const requiredFields = roles === 'administrador'
+    ? [Nombre, Apellido, Documento, Telefono, Email, password, roles]
+    : [Nombre, Apellido, Documento, Telefono, Email, Fecha_nacimiento, Genero, RH, Nacionalidad, password, roles];
+
+  if (requiredFields.some(field => !field)) {
+    Alert.alert("Error", "Por favor, completa todos los campos requeridos, incluyendo el rol.");
+    return;
+  }
+  if (roles === 'medico' && (!idConsultorio || !idEspecialidad)) {
+    Alert.alert("Error", "Para médicos, completa ID Consultorio e ID Especialidad.");
+    return;
+  }
   setLoading(true);
   const userData = {
     Nombre,
@@ -24,43 +39,28 @@ const handleRegister = async () => {
     Documento,
     Telefono,
     Email,
-    Fecha_nacimiento,
-    Genero,
-    RH,
-    Nacionalidad,
+    ...(roles !== 'administrador' && {
+      Fecha_nacimiento,
+      Genero,
+      RH,
+      Nacionalidad,
+    }),
     password,
     roles,
+    ...(roles === 'medico' && { idConsultorio, idEspecialidad }),
   };
 
   try {
     const result = await registerUser(userData);
-
     if (result.success) {
-      // ✅ Ahora, hacemos login automáticamente
-      const loginResult = await loginUser(Email, password);
-
-      if (loginResult.success) {
-        // Aquí puedes guardar el token si tu login lo devuelve
-        // Ejemplo con AsyncStorage:
-        // await AsyncStorage.setItem("token", loginResult.token);
-
-        Alert.alert("Éxito", "Registro exitoso, redirigiendo al inicio", [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("Login"),
-          },
-        ]);
-      } else {
-        Alert.alert(
-          "Error",
-          "Registro exitoso, pero fallo el inicio de sesión automático"
-        );
-      }
+      Alert.alert("Éxito", "Registro exitoso, ahora puedes iniciar sesión", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Login"),
+        },
+      ]);
     } else {
-      let errorMessage =
-  typeof result.message === "string"
-    ? result.message
-    : result.message?.message || JSON.stringify(result.message);
+      let errorMessage =typeof result.message === "string"? result.message : result.message?.message || JSON.stringify(result.message);
       Alert.alert("Error", errorMessage || "Ocurrió un error en el registro");
     }
   } catch (error) {
@@ -72,12 +72,12 @@ const handleRegister = async () => {
 };
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAvoidingView  //Contenedor que ajusta su comportamiento cuando aparece el teclado.
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.scrollContainer}>
         <View style={styles.innerContainer}>
         <Text style={styles.title}>🩺 Crear cuenta</Text>
         <Text style={styles.subtitle}>
@@ -120,38 +120,42 @@ const handleRegister = async () => {
           placeholder="Correo electrónico"
           value={Email}
           onChangeText={setEmail}
-          
+
           autoCapitalize="none"
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder=" Fecha de nacimiento (YYYY-MM-DD)"
-          value={Fecha_nacimiento}
-          onChangeText={setFechaNacimiento}
-        />
+        {roles !== 'administrador' && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder=" Fecha de nacimiento (YYYY-MM-DD)"
+              value={Fecha_nacimiento}
+              onChangeText={setFechaNacimiento}
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder=" Género (M/F)"
-          value={Genero}
-          onChangeText={setGenero}
-          maxLength={1}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder=" Género (M/F)"
+              value={Genero}
+              onChangeText={setGenero}
+              maxLength={1}
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder="RH (Ej: O+, A-)"
-          value={RH}
-          onChangeText={setRh}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="RH (Ej: O+, A-)"
+              value={RH}
+              onChangeText={setRh}
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nacionalidad"
-          value={Nacionalidad}
-          onChangeText={setNacionalidad}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Nacionalidad"
+              value={Nacionalidad}
+              onChangeText={setNacionalidad}
+            />
+          </>
+        )}
 
         <TextInput
           style={styles.input}
@@ -161,13 +165,39 @@ const handleRegister = async () => {
           onChangeText={setPassword}
           editable={!loading}
         />
-         <TextInput
-          style={styles.input}
-          placeholder=" Rol"
-          value={roles}
-          onChangeText={setRol}
-          
-        />
+
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={roles}
+            onValueChange={(itemValue) => setRol(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Selecciona un rol" value="" />
+            <Picker.Item label="Paciente" value="paciente" />
+            <Picker.Item label="Médico" value="medico" />
+            <Picker.Item label="Administrador" value="administrador" />
+          </Picker>
+        </View>
+
+        {roles === 'medico' && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="ID Consultorio"
+              value={idConsultorio}
+              onChangeText={setIdConsultorio}
+              keyboardType="numeric"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="ID Especialidad"
+              value={idEspecialidad}
+              onChangeText={setIdEspecialidad}
+              keyboardType="numeric"
+            />
+          </>
+        )}
 
         {/* Botones */}
         <BottonComponent title="Registrarse"  onPress={handleRegister} disabled={loading} />
@@ -178,7 +208,7 @@ const handleRegister = async () => {
           style={{ backgroundColor: '#0A2647' }}
         />
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -235,5 +265,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
+  },
+  pickerContainer: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#cfd9e6',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  picker: {
+    width: '100%',
+    height: 50,
   },
 });

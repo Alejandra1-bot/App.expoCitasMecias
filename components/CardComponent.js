@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-
 export default function CardComponents({ tittle, description, icon, color = "#4a90e2", onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -16,6 +15,7 @@ export default function CardComponents({ tittle, description, icon, color = "#4a
     </TouchableOpacity>
   );
 }
+
 const styles = StyleSheet.create({
   card: {
     width: '45%',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  title: {
+  tittle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4,

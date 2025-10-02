@@ -8,7 +8,61 @@ import { useAppContext } from "../../Screen/Configuracion/AppContext";
 const Tab = createBottomTabNavigator();
 
 export default function NavegacionPrincipal() {
-  const { colors } = useAppContext();
+  const { colors, userRole } = useAppContext();
+
+  const renderTabs = () => {
+    const tabs = [];
+
+    // Inicio para todos
+    tabs.push(
+      <Tab.Screen
+        key="Inicio"
+        name="Inicio"
+        component={InicioStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+          tabBarLabel: "Inicio",
+        }}
+      />
+    );
+
+    // Perfil para todos
+    tabs.push(
+      <Tab.Screen
+        key="Perfil"
+        name="Perfil"
+        component={PerfilesStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-circle-outline" size={size} color={color} />
+          ),
+          tabBarLabel: "Perfil",
+        }}
+      />
+    );
+
+    // Configuración para todos
+    tabs.push(
+      <Tab.Screen
+        key="Configuración"
+        name="Configuración"
+        component={ConfiguracionesStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+          tabBarLabel: "Configuración",
+        }}
+      />
+    );
+
+    return tabs;
+  };
 
   return (
     <Tab.Navigator
@@ -33,42 +87,7 @@ export default function NavegacionPrincipal() {
         },
       }}
     >
-      <Tab.Screen
-        name="Inicio"
-        component={InicioStack}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
-          ),
-          tabBarLabel: "Inicio",
-        }}
-      />
-
-      <Tab.Screen
-        name="Perfil"
-        component={PerfilesStack}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle-outline" size={size} color={color} />
-          ),
-          tabBarLabel: "Perfil",
-        }}
-      />
-
-      <Tab.Screen
-        name="Configuración"
-        component={ConfiguracionesStack}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          ),
-          tabBarLabel: "Configuración",
-        }}
-      />
-      
+      {renderTabs()}
     </Tab.Navigator>
   );
 }

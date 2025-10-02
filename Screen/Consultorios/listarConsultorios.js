@@ -9,7 +9,7 @@ export default function ListarConsultorios (){
     const [consultorios, setConsultorios] = useState([]);
     const navegation = useNavigation();
     const [loading, setLoading] = useState(false);
-    const { colors, texts } = useAppContext();
+    const { colors, texts, userRole } = useAppContext();
 
     const handleConsultorios = async () =>{
       setLoading(true);
@@ -18,7 +18,7 @@ export default function ListarConsultorios (){
         if (result.success) {
           setConsultorios(result.data);
         }else{
-          Alert.alert("Error ", result.message || "No se pudieron cargar los consultorios");
+         Alert.alert("Error", JSON.stringify(error.message));
         }
       } catch (error) {
         Alert.alert("Error ", "No se pudieron cargar los consultorios");
@@ -81,14 +81,17 @@ export default function ListarConsultorios (){
               consultorio={item}
               onEdit={() => handleEditar(item)}
               onDelete={() => handleEliminar(item.id)}
+              userRole={userRole}
             />
           )}
           ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noOffices}</Text>}
         />
 
-        <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
-          <Text style={styles.textBotton}>{texts.newOffice}</Text>
-        </TouchableOpacity>
+        {userRole === 'administrador' && (
+          <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
+            <Text style={styles.textBotton}>{texts.newOffice}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
 } 
