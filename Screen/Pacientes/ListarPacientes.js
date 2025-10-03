@@ -5,9 +5,6 @@ import PacienteCard from "../../components/PacientesCard";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../Configuracion/AppContext";
 
-
-
-
 export default function ListarPacientes (){
     const [pacientes, setPacientes] = useState([]);
     const navegation = useNavigation();

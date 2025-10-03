@@ -2,7 +2,6 @@ import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, Alert, Fla
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../../Src/Services/Conexion";
 import  {useState} from "react";
 import { useAppContext } from "../Configuracion/AppContext";
 import { listarCitas } from "../../Src/Services/CitasService";
@@ -17,11 +16,16 @@ export default function Perfil  ({navigation}) {
   useEffect(() =>{
     const cargarDatos = async () => {
       setUsuario({ user: {} });
-      if (userRole === 'paciente') {
+      if (userRole === 'paciente' || userRole === 'medico') {
         try {
           const result = await listarCitas();
           if (result.success) {
-            const filteredCitas = result.data.filter(cita => cita.idPaciente == userId);
+            let filteredCitas = [];
+            if (userRole === 'paciente') {
+              filteredCitas = result.data.filter(cita => cita.idPaciente == userId);
+            } else if (userRole === 'medico') {
+              filteredCitas = result.data.filter(cita => cita.idMedico == userId);
+            }
             setCitas(filteredCitas);
           }
         } catch (error) {
@@ -55,10 +59,10 @@ export default function Perfil  ({navigation}) {
           style={styles.photo}
         />
         <Text style={styles.errorText}>
-          {userRole === 'paciente' ? texts.patientProfile : userRole === '  medico' ? 'Perfil de medico' : 'Perfil de Administrador'}
+          {userRole === 'paciente' ? texts.patientProfile : userRole === 'medico' ? 'Perfil de medico' : 'Perfil de Administrador'}
         </Text>
         <Text style={styles.status}>
-          {userRole === 'paciente' ? texts.activePatient : userRole === 'Administrador' ? 'Médico Activo 🩺' : ' Administrador 👑'}
+          {userRole === 'paciente' ? texts.activePatient : userRole === 'Administrador' ? ' Médico Activo 🩺' : 'Administrador 👑 '}
         </Text>
       </View>
     
@@ -66,7 +70,7 @@ export default function Perfil  ({navigation}) {
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.personalData}</Text>
          <View style={styles.containerPerfil}>
-        <Text style={styles.label}>👤Nombre: {usuario.user.Nombre || "No disponible"}</Text>
+        <Text style={styles.label}>👤Nombre: {usuario.user.name || "No disponible"}</Text>
         <Text style={styles.label}>📧Correo: {usuario.user.Email || "No disponible"}</Text>
         <Text style={styles.label}>📞Teléfono: {usuario.user.Telefono || "No disponible"}</Text>
         {userRole === 'paciente' && (
@@ -87,8 +91,8 @@ export default function Perfil  ({navigation}) {
       </View>
      </View>
 
-     {/* ================= CITAS DEL PACIENTE ================= */}
-     {userRole === 'paciente' && (
+     {/* ================= CITAS ================= */}
+     {(userRole === 'paciente' || userRole === 'medico') && (
        <View style={styles.section}>
          <Text style={[styles.sectionTitle, { color: colors.text }]}>Mis Citas</Text>
          <FlatList
@@ -105,35 +109,11 @@ export default function Perfil  ({navigation}) {
        </View>
      )}
 
-      {/* ================= AJUSTES DE PERFIL ================= */}
-      {userRole === 'medico' && (
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.profileSettings}</Text>
-
-                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                  onPress={() => navigation.navigate("CitasPaciente")}>
-                   <Ionicons name="calendar-outline" size={24} color={colors.primary} />
-                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.viewAppointments}</Text>
-                 </TouchableOpacity>
-
-                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                  onPress={() => navigation.navigate("HistorialMedico")}>
-                   <Ionicons name="document-text-outline" size={24} color={colors.primary} />
-                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.medicalHistory}</Text>
-                 </TouchableOpacity>
-
-                 <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-                  onPress={() => navigation.navigate("EditarPerfil", { usuario })}>
-                   <Ionicons name="create-outline" size={24} color={colors.primary} />
-                   <Text style={[styles.optionText, { color: colors.text }]}>{texts.editProfile}</Text>
-                 </TouchableOpacity>
-        </View>
-      )}
    
-</View>
+ </View>
 
      
-
+ 
   );
 }
 const styles = StyleSheet.create({

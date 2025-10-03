@@ -47,7 +47,7 @@ export default function CitaCard({ cita, onEdit, onDelete, onPress }) {
 
         <View style={styles.row}>
           <Ionicons name="people-outline" size={16} color={colors.tabBarInactive} />
-          <Text style={[styles.detalle, { color: colors.text }]}> Recepcionista ID: {cita.idRecepcionista}</Text>
+          <Text style={[styles.detalle, { color: colors.text }]}> Recepcionista ID: {cita.idResepcionista}</Text>
         </View>
       </View>
 

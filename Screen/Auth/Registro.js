@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginUser, registerUser } from '../../Src/Services/AuthService';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import BottonComponent from '../../components/BottonComponents';
 
@@ -53,7 +53,7 @@ const handleRegister = async () => {
   try {
     const result = await registerUser(userData);
     if (result.success) {
-      Alert.alert("Éxito", "Registro exitoso, ahora puedes iniciar sesión", [
+      Alert.alert("Registro Exitoso", "Tu cuenta ha sido creada correctamente.", [
         {
           text: "OK",
           onPress: () => navigation.navigate("Login"),
@@ -77,7 +77,7 @@ const handleRegister = async () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
-      <View style={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.innerContainer}>
         <Text style={styles.title}>🩺 Crear cuenta</Text>
         <Text style={styles.subtitle}>
@@ -208,7 +208,7 @@ const handleRegister = async () => {
           style={{ backgroundColor: '#0A2647' }}
         />
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
