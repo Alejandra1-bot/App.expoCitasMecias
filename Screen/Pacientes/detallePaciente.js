@@ -22,10 +22,10 @@ export default function DetallePaciente() {
       {/* Información */}
       <View style={styles.infoBox}>
         <Text style={styles.label}>📞 Teléfono:</Text>
-        <Text style={styles.value}>{paciente.Telefono}</Text>
+        <Text style={styles.value}>{paciente.telefono}</Text>
 
         <Text style={styles.label}>📧 Email:</Text>
-        <Text style={styles.value}>{paciente.Email}</Text>
+        <Text style={styles.value}>{paciente.email}</Text>
 
         <Text style={styles.label}>🎂 Fecha de Nacimiento:</Text>
         <Text style={styles.value}>{paciente.Fecha_nacimiento}</Text>

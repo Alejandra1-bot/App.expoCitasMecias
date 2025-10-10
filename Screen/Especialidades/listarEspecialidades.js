@@ -3,11 +3,13 @@ import { listarEspecialidades, eliminarEspecialidad } from "../../Src/Services/E
 import { useNavigation } from "@react-navigation/native";
 import EspecialidadCard from "../../components/EspecialidadCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function ListarEspecialidades() {
   const [especialidades, setEspecialidades] = useState([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const { userRole } = useAppContext();
 
   const handleEspecialidades = async () => {
     setLoading(true);
@@ -80,17 +82,19 @@ export default function ListarEspecialidades() {
         renderItem={({ item }) => (
           <EspecialidadCard
             especialidad={item}
-            onEdit={() => handleEditar(item)}
-            onDelete={() => handleEliminar(item.id)}
+            onEdit={(userRole === 'recepcionista' || userRole === 'medico') ? null : () => handleEditar(item)}
+            onDelete={(userRole === 'recepcionista' || userRole === 'medico') ? null : () => handleEliminar(item.id)}
             onPress={() => navigation.navigate("DetalleEspecialidad", { especialidad: item })}
           />
         )}
         ListEmptyComponent={<Text style={styles.empty}>No hay Especialidades Registradas.</Text>}
       />
 
-      <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-        <Text style={styles.textBotton}>+ Nueva Especialidad</Text>
-      </TouchableOpacity>
+      {userRole !== 'recepcionista' && userRole !== 'medico' && (
+        <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+          <Text style={styles.textBotton}>+ Nueva Especialidad</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

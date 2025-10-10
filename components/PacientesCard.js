@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function PacienteCard({ paciente, onEdit, onDelete, onPress, userRole }) {
-  const inicial = paciente.Nombre ? paciente.Nombre.charAt(0).toUpperCase() : "?";
+  const inicial = (paciente.nombre || paciente.Nombre) ? (paciente.nombre || paciente.Nombre).charAt(0).toUpperCase() : "?";
 
   return (
     <Pressable
@@ -17,22 +17,42 @@ export default function PacienteCard({ paciente, onEdit, onDelete, onPress, user
       {/* Info */}
       <View style={styles.info}>
         <Text style={styles.nombre}>
-          {paciente.Nombre} {paciente.Apellido}
+          {paciente.nombre || paciente.Nombre} {paciente.apellido || paciente.Apellido}
         </Text>
 
         <View style={styles.row}>
           <Ionicons name="card-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Documento}</Text>
+          <Text style={styles.detalle}> {paciente.documento || paciente.Documento}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Telefono}</Text>
+          <Text style={styles.detalle}> {paciente.telefono || paciente.Telefono}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="mail-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {paciente.Email}</Text>
+          <Text style={styles.detalle}> {paciente.email || paciente.Email}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="calendar-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {paciente.fecha_nacimiento || paciente.Fecha_nacimiento}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="person-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {paciente.genero || paciente.Genero}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="water-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {paciente.rh || paciente.RH}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Ionicons name="flag-outline" size={16} color="#555" />
+          <Text style={styles.detalle}> {paciente.nacionalidad || paciente.Nacionalidad}</Text>
         </View>
       </View>
 

@@ -3,11 +3,13 @@ import { listarRecepcionistas, eliminarRecepcionista } from "../../Src/Services/
 import { useNavigation } from "@react-navigation/native";
 import RecepcionistaCard from "../../components/RecepcionistaCard";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function ListarRecepcionistas() {
   const [recepcionistas, setRecepcionistas] = useState([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const { userRole } = useAppContext();
 
   const handleRecepcionistas = async () => {
     setLoading(true);
@@ -80,16 +82,18 @@ export default function ListarRecepcionistas() {
         renderItem={({ item }) => (
           <RecepcionistaCard
             recepcionista={item}
-            onEdit={() => handleEditar(item)}
-            onDelete={() => handleEliminar(item.id)}
+            onEdit={(userRole === 'recepcionista' || userRole === 'medico') ? null : () => handleEditar(item)}
+            onDelete={(userRole === 'recepcionista' || userRole === 'medico') ? null : () => handleEliminar(item.id)}
           />
         )}
         ListEmptyComponent={<Text style={styles.empty}>No hay Recepcionistas registrados.</Text>}
       />
 
-      <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
-        <Text style={styles.textBotton}>+ Nuevo Recepcionista</Text>
-      </TouchableOpacity>
+      {userRole !== 'recepcionista' && userRole !== 'medico' && (
+        <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
+          <Text style={styles.textBotton}>+ Nuevo Recepcionista</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

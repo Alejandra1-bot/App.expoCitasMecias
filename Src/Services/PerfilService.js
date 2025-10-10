@@ -1,12 +1,10 @@
 // Src/Services/PerfilService.js
-import axios from "axios";
-
-const API_URL = "http://10.2.232.142:8000/api/perfil"; // cambia a la ruta real de tu backend
+import api from "./Conexion";
 
 // ✅ Obtener perfil del usuario autenticado
 export const obtenerPerfil = async () => {
   try {
-    const response = await axios.get(`${API_URL}`);
+    const response = await api.get("/me");
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error al obtener perfil:", error);
@@ -20,7 +18,7 @@ export const obtenerPerfil = async () => {
 // ✅ Editar perfil del usuario
 export const editarPerfil = async (perfilData) => {
   try {
-    const response = await axios.put(`${API_URL}`, perfilData);
+    const response = await api.put("/me", perfilData);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error al editar perfil:", error);
@@ -34,7 +32,7 @@ export const editarPerfil = async (perfilData) => {
 // ✅ Cambiar contraseña
 export const cambiarPassword = async (passwordData) => {
   try {
-    const response = await axios.put(`${API_URL}/password`, passwordData);
+    const response = await api.put("/me/password", passwordData);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error al cambiar contraseña:", error);

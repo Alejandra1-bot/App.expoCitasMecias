@@ -16,7 +16,7 @@ export default function DetalleMedico() {
         <Text style={styles.headerTitle}>
           {medico.Nombre} {medico.Apellido}
         </Text>
-        <Text style={styles.headerSub}>{medico.Especialidad}</Text>
+        <Text style={styles.headerSub}>{medico.Email}</Text>
       </View>
 
       {/* Información */}
@@ -27,8 +27,11 @@ export default function DetalleMedico() {
         <Text style={styles.label}>📞 Teléfono:</Text>
         <Text style={styles.value}>{medico.Telefono}</Text>
 
-        <Text style={styles.label}>📧 Email:</Text>
-        <Text style={styles.value}>{medico.Email}</Text>
+        <Text style={styles.label}>📧 Especialidad:</Text>
+        <Text style={styles.value}>{medico.idEspecialidad}</Text>
+    
+        <Text style={styles.label}>📧 Consultorio:</Text>
+        <Text style={styles.value}>{medico.idConsultorio}</Text>
 
        
       </View>

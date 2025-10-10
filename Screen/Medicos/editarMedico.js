@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -12,7 +12,10 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { Picker } from '@react-native-picker/picker';
 import { crearMedico, editarMedico } from "../../Src/Services/MedicoService";
+import { listarConsultorios } from "../../Src/Services/ConsultorioService";
+import { listarEspecialidades } from "../../Src/Services/EspecialidadesService";
 import { useAppContext } from "../Configuracion/AppContext";
 
 export default function EditarMedico() {
@@ -35,9 +38,31 @@ export default function EditarMedico() {
     medico ? String(medico.idEspecialidad) : ""
   );
 
+  const [consultorios, setConsultorios] = useState([]);
+  const [especialidades, setEspecialidades] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const esEdicion = !!medico;
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const [consultoriosResult, especialidadesResult] = await Promise.all([
+          listarConsultorios(),
+          listarEspecialidades()
+        ]);
+        if (consultoriosResult.success) {
+          setConsultorios(consultoriosResult.data);
+        }
+        if (especialidadesResult.success) {
+          setEspecialidades(especialidadesResult.data);
+        }
+      } catch (error) {
+        console.error("Error cargando datos:", error);
+      }
+    };
+    cargarDatos();
+  }, []);
 
   const handleGuardar = async () => {
     if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !idConsultorio || !idEspecialidad) {
@@ -139,20 +164,41 @@ export default function EditarMedico() {
           onChangeText={setPassword}
           editable={!loading}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="ID Consultorio"
-          value={idConsultorio}
-          onChangeText={setIdConsultorio}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="ID Especialidad"
-          value={idEspecialidad}
-          onChangeText={setIdEspecialidad}
-          keyboardType="numeric"
-        />
+        <View style={styles.pickerContainer}>
+          <Text style={styles.label}>Consultorio</Text>
+          <Picker
+            selectedValue={idConsultorio}
+            onValueChange={(itemValue) => setIdConsultorio(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Selecciona un consultorio" value="" />
+            {consultorios.map((consultorio) => (
+              <Picker.Item
+                key={consultorio.id}
+                label={`${consultorio.nombre || consultorio.Nombre || consultorio.name} (${consultorio.id})`}
+                value={String(consultorio.id)}
+              />
+            ))}
+          </Picker>
+        </View>
+
+        <View style={styles.pickerContainer}>
+          <Text style={styles.label}>Especialidad</Text>
+          <Picker
+            selectedValue={idEspecialidad}
+            onValueChange={(itemValue) => setIdEspecialidad(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Selecciona una especialidad" value="" />
+            {especialidades.map((especialidad) => (
+              <Picker.Item
+                key={especialidad.id}
+                label={`${especialidad.nombre || especialidad.Nombre || especialidad.name} (${especialidad.id})`}
+                value={String(especialidad.id)}
+              />
+            ))}
+          </Picker>
+        </View>
 
         <TouchableOpacity
           style={styles.button}
@@ -202,5 +248,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
     fontWeight: "600",
+  },
+  pickerContainer: {
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#374151",
+    marginBottom: 4,
+  },
+  picker: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
 });

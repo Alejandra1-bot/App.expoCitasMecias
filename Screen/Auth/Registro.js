@@ -18,10 +18,25 @@ export default function Registro({ navigation }) {
   const [roles, setRol] = useState('');
   const [idConsultorio, setIdConsultorio] = useState('');
   const [idEspecialidad, setIdEspecialidad] = useState('');
-   const [loading, setLoading] = useState(false);
+  const [Turno, setTurno] = useState('');
+    const [loading, setLoading] = useState(false);
 const handleRegister = async () => {
+  // Validación de contraseña
+  if (password.length < 8) {
+    Alert.alert("Error", "La contraseña debe tener al menos 8 caracteres.");
+    return;
+  }
+
+  // Validación de email
+  if (!Email.endsWith('@gmail.com')) {
+    Alert.alert("Error", "El correo electrónico debe terminar con @gmail.com.");
+    return;
+  }
+
   const requiredFields = roles === 'administrador'
     ? [Nombre, Apellido, Documento, Telefono, Email, password, roles]
+    : roles === 'recepcionista'
+    ? [Nombre, Apellido, Documento, Telefono, Email, password, roles, Turno]
     : [Nombre, Apellido, Documento, Telefono, Email, Fecha_nacimiento, Genero, RH, Nacionalidad, password, roles];
 
   if (requiredFields.some(field => !field)) {
@@ -39,7 +54,7 @@ const handleRegister = async () => {
     Documento,
     Telefono,
     Email,
-    ...(roles !== 'administrador' && {
+    ...((roles !== 'administrador' && roles !== 'recepcionista') && {
       Fecha_nacimiento,
       Genero,
       RH,
@@ -48,6 +63,7 @@ const handleRegister = async () => {
     password,
     roles,
     ...(roles === 'medico' && { idConsultorio, idEspecialidad }),
+    ...(roles === 'recepcionista' && { Turno }),
   };
 
   try {
@@ -124,7 +140,7 @@ const handleRegister = async () => {
           autoCapitalize="none"
         />
 
-        {roles !== 'administrador' && (
+        {(roles !== 'administrador' && roles !== 'recepcionista') && (
           <>
             <TextInput
               style={styles.input}
@@ -133,13 +149,17 @@ const handleRegister = async () => {
               onChangeText={setFechaNacimiento}
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder=" Género (M/F)"
-              value={Genero}
-              onChangeText={setGenero}
-              maxLength={1}
-            />
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={Genero}
+                onValueChange={(itemValue) => setGenero(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecciona Género" value="" />
+                <Picker.Item label="Masculino" value="M" />
+                <Picker.Item label="Femenino" value="F" />
+              </Picker>
+            </View>
 
             <TextInput
               style={styles.input}
@@ -166,6 +186,15 @@ const handleRegister = async () => {
           editable={!loading}
         />
 
+        {roles === 'recepcionista' && (
+          <TextInput
+            style={styles.input}
+            placeholder="Turno"
+            value={Turno}
+            onChangeText={setTurno}
+          />
+        )}
+
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={roles}
@@ -176,6 +205,7 @@ const handleRegister = async () => {
             <Picker.Item label="Paciente" value="paciente" />
             <Picker.Item label="Médico" value="medico" />
             <Picker.Item label="Administrador" value="administrador" />
+            <Picker.Item label="Recepcionista" value="recepcionista" />
           </Picker>
         </View>
 

@@ -3,6 +3,7 @@ import api from "./Conexion";
 import { crearMedico } from "./MedicoService";
 import { crearPaciente } from "./PacienteService";
 import { crearAdministrador } from "./AdministradorService";
+import { crearRecepcionista } from "./RecepcionistaService";
 
 export const loginUser= async(Email, password) => {
     try {
@@ -21,7 +22,7 @@ export const loginUser= async(Email, password) => {
         }else{
             console.log("No se recibio el token en la respuesta");
         }
-        return { success: true, token};
+        return { success: true, token, role, userId };
     }catch(error){
         console.error("Error al iniciar sesion:", error.response ? error.response.data : error.message);
         return {
@@ -57,6 +58,14 @@ export const registerUser = async (userData) => {
       if (regResult.success) {
         const userId = regResult.data.id;
         response = await crearAdministrador({ ...data, idUsuario: userId });
+      } else {
+        response = regResult;
+      }
+    } else if (roles === 'recepcionista') {
+      const regResult = await api.post('/registrar', userData);
+      if (regResult.success) {
+        const userId = regResult.data.id;
+        response = await crearRecepcionista({ ...data, idUsuario: userId });
       } else {
         response = regResult;
       }

@@ -1,22 +1,24 @@
-import { 
-  TextInput, 
-  Text, 
-  View, 
-  StyleSheet, 
-  Image, 
-  Alert, 
-  KeyboardAvoidingView, 
-  Platform, 
-  useColorScheme 
+import {
+  TextInput,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  useColorScheme
 } from "react-native";
 import BottonComponent from "../../components/BottonComponents";
 import { useState } from "react";
 import { loginUser } from "../../Src/Services/AuthService";
+import { useAppContext } from "../Configuracion/AppContext";
 
 export default function Login({ navigation }) {
   const [Email, setEmail] = useState("");
-  const [password, setPassword] = useState("");  
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAppContext();
 
   const theme = useColorScheme(); // "light" | "dark"
 
@@ -43,9 +45,11 @@ export default function Login({ navigation }) {
     try {
       const result = await loginUser(Email, password);
       if (result.success) {
-        Alert.alert("Éxito", "Inicio de sesión exitoso", [
-          { text: "Ok", onPress: () => console.log("Login exitoso...") },
-        ]);
+        const token = result.token;
+        const role = result.role || 'paciente'; // default if not provided
+        const userId = result.userId;
+        await login(token, role, userId);
+        Alert.alert("Éxito", "Inicio de sesión exitoso");
       } else {
         Alert.alert(
           "Error de Login",

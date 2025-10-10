@@ -8,8 +8,10 @@ export const AppProvider = ({ children }) => {
   const [language, setLanguage] = useState("es"); // español por defecto
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
 
-  // Cargar tema, idioma y rol desde AsyncStorage al iniciar
+  // Cargar tema, idioma, rol y token desde AsyncStorage al iniciar
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -21,11 +23,16 @@ export const AppProvider = ({ children }) => {
         if (savedLanguage) {
           setLanguage(savedLanguage);
         }
+        const savedToken = await AsyncStorage.getItem("userToken");
         const savedRole = await AsyncStorage.getItem("userRole");
+        const savedUserId = await AsyncStorage.getItem("userId");
+        if (savedToken) {
+          setToken(savedToken);
+          setIsAuthenticated(true);
+        }
         if (savedRole) {
           setUserRole(savedRole);
         }
-        const savedUserId = await AsyncStorage.getItem("userId");
         if (savedUserId) {
           setUserId(savedUserId);
         }
@@ -53,6 +60,32 @@ export const AppProvider = ({ children }) => {
       await AsyncStorage.setItem("language", newLanguage);
     } catch (error) {
       console.error("Error saving language:", error);
+    }
+  };
+
+  // Función para login
+  const login = async (token, role, userId) => {
+    setToken(token);
+    setUserRole(role);
+    setUserId(userId);
+    setIsAuthenticated(true);
+    try {
+      await AsyncStorage.setItem("userToken", token);
+      await AsyncStorage.setItem("userRole", role);
+      if (userId) await AsyncStorage.setItem("userId", userId.toString());
+    } catch (error) {
+      console.error("Error saving login data:", error);
+    }
+  };
+
+  // Función para logout
+  const logout = async () => {
+    setToken(null);
+    setIsAuthenticated(false);
+    try {
+      await AsyncStorage.removeItem("userToken");
+    } catch (error) {
+      console.error("Error during logout:", error);
     }
   };
 
@@ -113,6 +146,8 @@ export const AppProvider = ({ children }) => {
       noOffices: "No hay Consultorios Registrados",
       patientProfile: "Perfil del Paciente",
       activePatient: "Paciente Activo 🏥",
+      adminProfile: "Perfil de la Administradora",
+      receptionistProfile: "Perfil de la Recepcionista",
       personalData: "Datos Personales",
       medicalInfo: "Información Médica",
       profileSettings: "Ajustes de Perfil",
@@ -142,6 +177,8 @@ export const AppProvider = ({ children }) => {
       noOffices: "No Offices Registered",
       patientProfile: "Patient Profile",
       activePatient: "Active Patient 🏥",
+      adminProfile: "Administrator Profile",
+      receptionistProfile: "Receptionist Profile",
       personalData: "Personal Data",
       medicalInfo: "Medical Information",
       profileSettings: "Profile Settings",
@@ -151,7 +188,22 @@ export const AppProvider = ({ children }) => {
   const currentTexts = texts[language];
 
   return (
-    <AppContext.Provider value={{ theme, setTheme: changeTheme, language, setLanguage: changeLanguage, userRole, setUserRole, userId, setUserId, colors: currentColors, texts: currentTexts }}>
+    <AppContext.Provider value={{
+      theme,
+      setTheme: changeTheme,
+      language,
+      setLanguage: changeLanguage,
+      userRole,
+      setUserRole,
+      userId,
+      setUserId,
+      isAuthenticated,
+      token,
+      login,
+      logout,
+      colors: currentColors,
+      texts: currentTexts
+    }}>
       {children}
     </AppContext.Provider>
   );

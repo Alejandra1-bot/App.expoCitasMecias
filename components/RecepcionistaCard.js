@@ -19,54 +19,57 @@ export default function RecepcionistaCard({ recepcionista, onEdit, onDelete }) {
       {/* Info */}
       <View style={styles.info}>
         <Text style={styles.nombre}>
-          {recepcionista.Nombre} {recepcionista.Apellido}
+          {recepcionista.nombre || recepcionista.Nombre} {recepcionista.apellido || recepcionista.Apellido}
         </Text>
 
         <View style={styles.row}>
           <Ionicons name="time-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> Turno: {recepcionista.Turno}</Text>
+          <Text style={styles.detalle}> Turno: {recepcionista.turno || recepcionista.Turno}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {recepcionista.Telefono}</Text>
+          <Text style={styles.detalle}> {recepcionista.telefono || recepcionista.Telefono}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="mail-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {recepcionista.Email}</Text>
+          <Text style={styles.detalle}> {recepcionista.email || recepcionista.Email}</Text>
         </View>
 
-        <View style={styles.row}>
-          <Ionicons name="lock-closed-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {recepcionista.Password}</Text>
-        </View>
+       
       </View>
 
       {/* Botones */}
-      <View style={styles.actions}>
-        <Pressable
-          onPress={onEdit}
-          style={({ pressed }) => [
-            styles.button,
-            styles.editBtn,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="create-outline" size={18} color="#fff" />
-        </Pressable>
+      {(onEdit || onDelete) && (
+        <View style={styles.actions}>
+          {onEdit && (
+            <Pressable
+              onPress={onEdit}
+              style={({ pressed }) => [
+                styles.button,
+                styles.editBtn,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons name="create-outline" size={18} color="#fff" />
+            </Pressable>
+          )}
 
-        <Pressable
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.button,
-            styles.deleteBtn,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Ionicons name="trash-outline" size={18} color="#fff" />
-        </Pressable>
-      </View>
+          {onDelete && (
+            <Pressable
+              onPress={onDelete}
+              style={({ pressed }) => [
+                styles.button,
+                styles.deleteBtn,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons name="trash-outline" size={18} color="#fff" />
+            </Pressable>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

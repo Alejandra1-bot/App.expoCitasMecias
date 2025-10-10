@@ -19,23 +19,23 @@ export default function EditarPerfil() {
  
   const usuario = route.params?.usuario;
 
-  const [nombre, setNombre] = useState(usuario ? usuario.Nombre : "");
-  const [apellido, setApellido] = useState(usuario ? usuario.Apellido : "");
-  const [email, setEmail] = useState(usuario ? usuario.Email : "");
-  const [telefono, setTelefono] = useState(usuario ? usuario.Telefono : "");
+  const [name, setName] = useState(usuario ? usuario.users?.name : "");
+  const [apellido, setApellido] = useState(usuario ? usuario.users?.apellido : "");
+  const [email, setEmail] = useState(usuario ? usuario.users?.email : "");
+  const [telefono, setTelefono] = useState(usuario ? usuario.users?.telefono : "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleGuardar = async () => {
-    if (!nombre || !apellido || !email || !telefono) {
+    if (!name || !apellido || !email || !telefono) {
       Alert.alert("Error", "Por favor completa todos los campos.");
       return;
     }
 
     setLoading(true);
     try {
-      const result = await editarPerfil(usuario.id, {
-        Nombre: nombre,
+      const result = await editarPerfil({
+        Nombre: name,
         Apellido: apellido,
         Email: email,
         Telefono: telefono,
@@ -66,8 +66,8 @@ export default function EditarPerfil() {
         <TextInput
           style={styles.input}
           placeholder="Nombre"
-          value={nombre}
-          onChangeText={setNombre}
+          value={name}
+          onChangeText={setName}
         />
         <TextInput
           style={styles.input}

@@ -10,11 +10,11 @@ export default function EditarPaciente() {
 
   const paciente = route.params ?.paciente;
 
-  const [Nombre, setNombre] = useState(paciente ? paciente.Nombre : "");
+  const [Nombre, setNombre] = useState(paciente ? paciente.name : "");
   const [Apellido, setApellido] = useState(paciente ? paciente.Apellido : "");
   const [Documento, setDocumento] = useState(paciente ? paciente.Documento : "");
-  const [Telefono, setTelefono] = useState(paciente ? paciente.Telefono : "");
-  const [Email, setEmail] = useState(paciente ? paciente.Email : "");
+  const [Telefono, setTelefono] = useState(paciente ? paciente.telefono : "");
+  const [Email, setEmail] = useState(paciente ? paciente.email : "");
   const [Fecha_nacimiento, setFechaNacimiento] = useState(paciente ? paciente.Fecha_nacimiento : "");
   const [Genero, setGenero] = useState(paciente ? paciente.Genero : "");
   const [RH, setRH] = useState(paciente ? paciente.RH : "");

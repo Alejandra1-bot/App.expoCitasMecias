@@ -1,23 +1,20 @@
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppContext } from "./AppContext";
 
 
 
 export default function Configuracion({navigation}) {
-  const { colors, texts } = useAppContext();
+  const { colors, texts, logout } = useAppContext();
 
   const handleLogout = async () => {
-  try {
-    await AsyncStorage.removeItem("userToken"); // eliminar token o sesión
-    Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente", 
-      
-  );
-  } catch (error) {
-    console.error("Error al cerrar sesión", error);
-  }
-};
+   try {
+     await logout();
+     Alert.alert("Sesión cerrada", "Has cerrado sesión correctamente");
+   } catch (error) {
+     console.error("Error al cerrar sesión", error);
+   }
+ };
 
 
   return (

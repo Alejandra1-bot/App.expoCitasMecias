@@ -76,6 +76,53 @@ export default function Inicio({ navigation }) {
               onPress={() => navigation.navigate("CitasFlow")}
             />
           </>
+        ) : userRole === 'recepcionista' ? (
+          <>
+            <CardComponents
+              key="pacientes"
+              tittle="Pacientes"
+              description="Listar pacientes."
+              icon="person-outline"
+              color="#2563EB"
+              onPress={() => navigation.navigate("PacientesFlow")}
+            />
+
+            <CardComponents
+              key="medicos"
+              tittle="Médicos"
+              description="Listar médicos."
+              icon="medkit-outline"
+              color="#10B981"
+              onPress={() => navigation.navigate("MedicosFlow")}
+            />
+
+            <CardComponents
+              key="consultorios"
+              tittle="Consultorios"
+              description="Listar consultorios."
+              icon="business-outline"
+              color="#8B5CF6"
+              onPress={() => navigation.navigate("ConsultoriosFlow")}
+            />
+
+            <CardComponents
+              key="especialidades"
+              tittle="Especialidades"
+              description="Listar especialidades médicas."
+              icon="list-outline"
+              color="#F59E0B"
+              onPress={() => navigation.navigate("EspecialidadesFlow")}
+            />
+
+            <CardComponents
+              key="citas"
+              tittle="Citas"
+              description="Crear, editar y eliminar citas médicas."
+              icon="calendar-outline"
+              color="#EF4444"
+              onPress={() => navigation.navigate("CitasFlow")}
+            />
+          </>
         ) : userRole === 'medico' ? (
           <>
             <CardComponents
@@ -90,7 +137,7 @@ export default function Inicio({ navigation }) {
             <CardComponents
               key="especialidades"
               tittle="Especialidades"
-              description="Ver especialidades médicas."
+              description="Listar especialidades médicas."
               icon="list-outline"
               color="#F59E0B"
               onPress={() => navigation.navigate("EspecialidadesFlow")}
@@ -99,7 +146,7 @@ export default function Inicio({ navigation }) {
             <CardComponents
               key="recepcionistas"
               tittle="Recepcionistas"
-              description="Ver recepcionistas."
+              description="Listar recepcionistas."
               icon="people-outline"
               color="#06B6D4"
               onPress={() => navigation.navigate("RecepcionistasFlow")}

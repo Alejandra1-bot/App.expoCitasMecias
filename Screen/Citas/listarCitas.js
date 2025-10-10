@@ -18,9 +18,9 @@ export default function ListarCitas() {
       if (result.success) {
         let filteredCitas = result.data;
         if (userRole === 'paciente') {
-          filteredCitas = result.data.filter(cita => cita.idPaciente == userId);
+          filteredCitas = result.data.filter(cita => cita.idPaciente == parseInt(userId));
         } else if (userRole === 'medico') {
-          filteredCitas = result.data.filter(cita => cita.idMedico == userId);
+          filteredCitas = result.data; // Asumir que el backend filtra las citas del médico
         }
         // Admin ve todas
         setCitas(filteredCitas);
@@ -97,7 +97,7 @@ export default function ListarCitas() {
         ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noAppointments}</Text>}
       />
 
-      {userRole === 'administrador' && (
+      {(userRole === 'administrador' || userRole === 'recepcionista') && (
         <TouchableOpacity style={[styles.botonCrear, { backgroundColor: colors.secondary }]} onPress={handleCrear}>
           <Text style={styles.textBotton}>{texts.newAppointment}</Text>
         </TouchableOpacity>
