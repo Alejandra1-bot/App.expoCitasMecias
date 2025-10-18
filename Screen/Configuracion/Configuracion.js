@@ -1,11 +1,81 @@
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Alert , Button} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppContext } from "./AppContext";
+import { Switch } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect , useState, useCallback} from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 
 export default function Configuracion({navigation}) {
-  const { colors, texts, logout } = useAppContext();
+   const { colors, texts, logout } = useAppContext();
+   const [permisosNotificaciones, setPermisoNotificaciones] = useState(false);
+   const [loading, setLoading] = useState(true);
+
+  const checkPermisos = async () => {
+    const {status} = await Notifications.getPermissionsAsync();
+    const preferencias = await AsyncStorage.getItem('notificaciones_activas');
+    setPermisoNotificaciones(status === 'granted' && preferencias === 'true');
+    setLoading(false);
+  };
+
+  useEffect(() =>{
+    checkPermisos();
+  }, []);
+
+  useFocusEffect (
+    
+ useCallback(() =>{
+      checkPermisos();
+    }, [])
+  );
+
+  const toggleSwitch= async (valor)=>{
+    if (valor) {
+      const {status} = await Notifications.requestPermissionsAsync();
+      if(status === 'granted'){
+          await AsyncStorage.setItem ('notificaciones_activas', 'true');
+          setPermisoNotificaciones(true);
+          Alert.alert('Permiso concedido');
+
+      }else{
+        await AsyncStorage.setItem('notificaciones_activas', 'false');
+        setPermisoNotificaciones(flase);
+        Alert,alert('Permiso Denegado');
+
+      }
+    }else{
+      await AsyncStorage.setItem('notificaciones_activas', 'false');
+      setPermisoNotificaciones(false);
+      Alert.alert('Notificaciones desactivadas');
+    }
+
+  }
+
+  const programarNotificacion = async () => {
+    const {status } = await Notifications.getPermissionsAsync();
+    const preferencia = await AsyncStorage.getItem('notificaciones_activas');
+    if(status!== 'granted' || preferencia !== 'true'){
+      Alert.alert('No tienes permisos para recibir notificaciones');
+      return;
+    }
+    const trigger =  new Date(Date.now() + 2 * 60 * 1000); // por 2 minutos 
+
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content:{
+          title: 'Notificaion Programada',
+          bofy: 'Esta es una notificacion programada para 2 minutos despues.',
+        },
+        trigger,
+
+      });
+      Alert.alert('Notificaion programda para 2 minutos despues');
+    } catch (error) {
+      Alert.alert('Error al programar la notificacion');
+    }
+  }
 
   const handleLogout = async () => {
    try {
@@ -15,9 +85,7 @@ export default function Configuracion({navigation}) {
      console.error("Error al cerrar sesión", error);
    }
  };
-
-
-  return (
+return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* ================= ENCABEZADO ================= */}
       <View style={styles.header}>
@@ -26,60 +94,78 @@ export default function Configuracion({navigation}) {
         <Text style={styles.status}>Ajusta tu aplicación de citas</Text>
       </View>
 
+      {/* ================= NOTIFICACIONES ================= */}
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontSize: 18, marginBottom: 10 }}>
+          Notificaciones: {permisosNotificaciones ? "Activadas" : "Desactivadas"}
+        </Text>
+        <Switch
+         value={permisosNotificaciones} 
+         onValueChange={toggleSwitch}
+          />
+          <Button title='Programar notificacion de 2 minutos' onPress={programarNotificacion}/>
+      </View>
+
       {/* ================= OPCIONES GENERALES ================= */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.generalOptions}</Text>
 
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("Apariencia")}
+        >
+          <Ionicons name="color-palette-outline" size={28} color="#2563EB" />
+          <Text style={[styles.optionText, { color: colors.text }]}>{texts.appearance}</Text>
+        </TouchableOpacity>
 
-              <TouchableOpacity
-         style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-         onPress={() => navigation.navigate("Apariencia")}
- >
-   <Ionicons name="color-palette-outline" size={28} color="#2563EB" />
-   <Text style={[styles.optionText, { color: colors.text }]}>{texts.appearance}</Text>
- </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("idioma")}
+        >
+          <Ionicons name="globe-outline" size={28} color="#F59E0B" />
+          <Text style={[styles.optionText, { color: colors.text }]}>{texts.language}</Text>
+        </TouchableOpacity>
 
- <TouchableOpacity
-   style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-   onPress={() => navigation.navigate("idioma")}
- >
-   <Ionicons name="globe-outline" size={28} color="#F59E0B" />
-   <Text style={[styles.optionText, { color: colors.text }]}>{texts.language}</Text>
- </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("Perfil")}
+        >
+          <Ionicons name="person-outline" size={28} color="#8B5CF6" />
+          <Text style={[styles.optionText, { color: colors.text }]}>{texts.profile}</Text>
+        </TouchableOpacity>
 
- <TouchableOpacity
-   style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-   onPress={() => navigation.navigate("Perfil")}
- >
-   <Ionicons name="person-outline" size={28} color="#8B5CF6" />
-   <Text style={[styles.optionText, { color: colors.text }]}>{texts.profile}</Text>
- </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("Notificaciones")}
+        >
+          <Ionicons name="notifications-outline" size={28} color="#10B981" />
+          <Text style={[styles.optionText, { color: colors.text }]}>{texts.notifications}</Text>
+        </TouchableOpacity>
 
-
-
-         <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("Notificaciones")}>
-           <Ionicons name="notifications-outline" size={28} color="#10B981" />
-           <Text style={[styles.optionText, { color: colors.text }]}>{texts.notifications}</Text>
-         </TouchableOpacity>
-
-         <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => navigation.navigate("Seguridad")}>
-           <Ionicons name="lock-closed-outline" size={28} color="#8B5CF6" />
-           <Text style={[styles.optionText, { color: colors.text }]}>{texts.privacy}</Text>
-         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("Seguridad")}
+        >
+          <Ionicons name="lock-closed-outline" size={28} color="#8B5CF6" />
+          <Text style={[styles.optionText, { color: colors.text }]}>{texts.privacy}</Text>
+        </TouchableOpacity>
       </View>
 
       {/* ================= OPCIONES MÉDICAS ================= */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>{texts.mainConfig}</Text>
 
-
-        <TouchableOpacity style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-         onPress={() => navigation.navigate("Soporte")}>
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          onPress={() => navigation.navigate("Soporte")}
+        >
           <Ionicons name="help-circle-outline" size={28} color="#EF4444" />
           <Text style={[styles.optionText, { color: colors.text }]}>{texts.help}</Text>
         </TouchableOpacity>
-         <TouchableOpacity style={[styles.optionCard, { backgroundColor: "#FEE2E2", borderColor: colors.border }]}
-             onPress={handleLogout}
+
+        <TouchableOpacity
+          style={[styles.optionCard, { backgroundColor: "#FEE2E2", borderColor: colors.border }]}
+          onPress={handleLogout}
         >
           <Ionicons name="log-out-outline" size={28} color="#EF4444" />
           <Text style={[styles.optionText, { color: colors.text }]}>{texts.logout}</Text>
