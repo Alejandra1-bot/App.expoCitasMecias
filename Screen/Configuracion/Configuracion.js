@@ -13,69 +13,69 @@ export default function Configuracion({navigation}) {
    const [permisosNotificaciones, setPermisoNotificaciones] = useState(false);
    const [loading, setLoading] = useState(true);
 
-  const checkPermisos = async () => {
-    const {status} = await Notifications.getPermissionsAsync();
-    const preferencias = await AsyncStorage.getItem('notificaciones_activas');
-    setPermisoNotificaciones(status === 'granted' && preferencias === 'true');
-    setLoading(false);
-  };
+//   const checkPermisos = async () => {
+//     const {status} = await Notifications.getPermissionsAsync();
+//     const preferencias = await AsyncStorage.getItem('notificaciones_activas');
+//     setPermisoNotificaciones(status === 'granted' && preferencias === 'true');
+//     setLoading(false);
+//   };
 
-  useEffect(() =>{
-    checkPermisos();
-  }, []);
+//   useEffect(() =>{
+//     checkPermisos();
+//   }, []);
 
-  useFocusEffect (
+//   useFocusEffect (
     
- useCallback(() =>{
-      checkPermisos();
-    }, [])
-  );
+//  useCallback(() =>{
+//       checkPermisos();
+//     }, [])
+//   );
 
-  const toggleSwitch= async (valor)=>{
-    if (valor) {
-      const {status} = await Notifications.requestPermissionsAsync();
-      if(status === 'granted'){
-          await AsyncStorage.setItem ('notificaciones_activas', 'true');
-          setPermisoNotificaciones(true);
-          Alert.alert('Permiso concedido');
+//   const toggleSwitch= async (valor)=>{
+//     if (valor) {
+//       const {status} = await Notifications.requestPermissionsAsync();
+//       if(status === 'granted'){
+//           await AsyncStorage.setItem ('notificaciones_activas', 'true');
+//           setPermisoNotificaciones(true);
+//           Alert.alert('Permiso concedido');
 
-      }else{
-        await AsyncStorage.setItem('notificaciones_activas', 'false');
-        setPermisoNotificaciones(flase);
-        Alert,alert('Permiso Denegado');
+//       }else{
+//         await AsyncStorage.setItem('notificaciones_activas', 'false');
+//         setPermisoNotificaciones(flase);
+//         Alert,alert('Permiso Denegado');
 
-      }
-    }else{
-      await AsyncStorage.setItem('notificaciones_activas', 'false');
-      setPermisoNotificaciones(false);
-      Alert.alert('Notificaciones desactivadas');
-    }
+//       }
+//     }else{
+//       await AsyncStorage.setItem('notificaciones_activas', 'false');
+//       setPermisoNotificaciones(false);
+//       Alert.alert('Notificaciones desactivadas');
+//     }
 
-  }
+//   }
 
-  const programarNotificacion = async () => {
-    const {status } = await Notifications.getPermissionsAsync();
-    const preferencia = await AsyncStorage.getItem('notificaciones_activas');
-    if(status!== 'granted' || preferencia !== 'true'){
-      Alert.alert('No tienes permisos para recibir notificaciones');
-      return;
-    }
-    const trigger =  new Date(Date.now() + 2 * 60 * 1000); // por 2 minutos 
+  // const programarNotificacion = async () => {
+  //   const {status } = await Notifications.getPermissionsAsync();
+  //   const preferencia = await AsyncStorage.getItem('notificaciones_activas');
+  //   if(status!== 'granted' || preferencia !== 'true'){
+  //     Alert.alert('No tienes permisos para recibir notificaciones');
+  //     return;
+  //   }
+  //   const trigger =  new Date(Date.now() + 2 * 60 * 1000); // por 2 minutos 
 
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content:{
-          title: 'Notificaion Programada',
-          bofy: 'Esta es una notificacion programada para 2 minutos despues.',
-        },
-        trigger,
+  //   try {
+  //     await Notifications.scheduleNotificationAsync({
+  //       content:{
+  //         title: 'Notificaion Programada',
+  //         bofy: 'Esta es una notificacion programada para 2 minutos despues.',
+  //       },
+  //       trigger,
 
-      });
-      Alert.alert('Notificaion programda para 2 minutos despues');
-    } catch (error) {
-      Alert.alert('Error al programar la notificacion');
-    }
-  }
+  //     });
+  //     Alert.alert('Notificaion programda para 2 minutos despues');
+  //   } catch (error) {
+  //     Alert.alert('Error al programar la notificacion');
+  //   }
+  // }
 
   const handleLogout = async () => {
    try {
@@ -93,8 +93,8 @@ return (
         <Text style={styles.headerTitle}>Configuración Médica</Text>
         <Text style={styles.status}>Ajusta tu aplicación de citas</Text>
       </View>
-
-      {/* ================= NOTIFICACIONES ================= */}
+{/* 
+      ================= NOTIFICACIONES =================
       <View style={{ padding: 20 }}>
         <Text style={{ fontSize: 18, marginBottom: 10 }}>
           Notificaciones: {permisosNotificaciones ? "Activadas" : "Desactivadas"}
@@ -104,7 +104,7 @@ return (
          onValueChange={toggleSwitch}
           />
           <Button title='Programar notificacion de 2 minutos' onPress={programarNotificacion}/>
-      </View>
+      </View> */}
 
       {/* ================= OPCIONES GENERALES ================= */}
       <View style={styles.section}>

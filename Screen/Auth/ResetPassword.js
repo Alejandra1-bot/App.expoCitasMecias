@@ -10,17 +10,30 @@ import {
   useColorScheme
 } from "react-native";
 import BottonComponent from "../../components/BottonComponents";
-import { useState } from "react";
-import { loginUser } from "../../Src/Services/AuthService";
-import { useAppContext } from "../Configuracion/AppContext";
+import { useState, useEffect } from "react";
+import { resetPassword } from "../../Src/Services/AuthService";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
-export default function Login({ navigation }) {
-  const [Email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function ResetPassword({ navigation }) {
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAppContext();
+  const [code, setCode] = useState("");
 
+  const route = useRoute();
+  const nav = useNavigation();
   const theme = useColorScheme(); // "light" | "dark"
+
+  useEffect(() => {
+    // Extraer el código de los parámetros de la ruta
+    const { code: urlCode } = route.params || {};
+    if (urlCode) {
+      setCode(urlCode);
+    } else {
+      Alert.alert("Error", "Código de restablecimiento no válido");
+      nav.goBack();
+    }
+  }, [route.params, nav]);
 
   const colors = theme === "dark"
     ? {
@@ -40,27 +53,37 @@ export default function Login({ navigation }) {
         inputBg: "#F8FAFC",
       };
 
-  const handleLogin = async () => {
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      Alert.alert("Error", "Por favor completa todos los campos");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "Las contraseñas no coinciden");
+      return;
+    }
+    if (newPassword.length < 8) {
+      Alert.alert("Error", "La contraseña debe tener al menos 8 caracteres");
+      return;
+    }
     setLoading(true);
     try {
-      const result = await loginUser(Email, password);
+      const result = await resetPassword(code, newPassword);
       if (result.success) {
-        const token = result.token;
-        const role = result.role || 'paciente'; // default if not provided
-        const userId = result.userId;
-        await login(token, role, userId);
-        Alert.alert("Éxito", "Inicio de sesión exitoso");
+        Alert.alert("Éxito", "Contraseña restablecida correctamente", [
+          { text: "OK", onPress: () => nav.navigate("Login") }
+        ]);
       } else {
         Alert.alert(
-          "Error de Login",
+          "Error",
           typeof result.message === "string"
             ? result.message
-            : result.message?.message || JSON.stringify(result.message) || "Ocurrió un error al iniciar sesión"
+            : result.message?.message || JSON.stringify(result.message) || "Ocurrió un error al restablecer la contraseña"
         );
       }
     } catch (error) {
-      console.error("Error inesperado en login:", error);
-      Alert.alert("Error", "Ocurrió un error inesperado al intentar iniciar sesión");
+      console.error("Error inesperado en restablecimiento:", error);
+      Alert.alert("Error", "Ocurrió un error inesperado al restablecer la contraseña");
     } finally {
       setLoading(false);
     }
@@ -80,54 +103,49 @@ export default function Login({ navigation }) {
         />
 
         {/* Título */}
-        <Text style={[styles.titulo, { color: colors.text }]}>🏥 Citas Médicas</Text>
+        <Text style={[styles.titulo, { color: colors.text }]}>🔐 Restablecer Contraseña</Text>
         <Text style={[styles.subtitulo, { color: colors.subtext }]}>
-          Accede a tu cuenta para continuar
+          Ingresa tu nueva contraseña
         </Text>
 
-        {/* Inputs */}
+        {/* Input Nueva Contraseña */}
         <TextInput
           style={[
             styles.input,
             { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text },
           ]}
-          placeholder="📧 Correo electrónico"
+          placeholder="🔒 Nueva Contraseña"
           placeholderTextColor={colors.subtext}
-          value={Email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          style={[
-            styles.input,
-            { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text },
-          ]}
-          placeholder="🔒 Contraseña"
-          placeholderTextColor={colors.subtext}
+          value={newPassword}
+          onChangeText={setNewPassword}
           secureTextEntry
-          value={password}
-          onChangeText={setPassword}
           editable={!loading}
         />
 
-              <BottonComponent 
-          title="✅ Iniciar Sesión"  
-          onPress={handleLogin} 
+        {/* Input Confirmar Contraseña */}
+        <TextInput
+          style={[
+            styles.input,
+            { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text },
+          ]}
+          placeholder="🔒 Confirmar Contraseña"
+          placeholderTextColor={colors.subtext}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          editable={!loading}
+        />
+
+        <BottonComponent
+          title="✅ Restablecer Contraseña"
+          onPress={handleResetPassword}
           disabled={loading}
-          gradient // este activa el gradiente
+          gradient
         />
 
         <BottonComponent
-          title="¿Olvidaste tu contraseña?"
-          onPress={() => navigation.navigate("RecuperarContrasena")}
-          style={{ backgroundColor: "#FF6B35", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 25 }}
-        />
-
-        <BottonComponent
-          title="¿No tienes cuenta? Regístrate"
-          onPress={() => navigation.navigate("Registro")}
+          title="⬅️ Volver al Login"
+          onPress={() => nav.navigate("Login")}
           style={{ backgroundColor: "#0A2647", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 25 }}
         />
 

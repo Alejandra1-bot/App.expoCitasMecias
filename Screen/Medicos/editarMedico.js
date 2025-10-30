@@ -12,8 +12,11 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+// import { Picker } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+
 import { crearMedico, editarMedico } from "../../Src/Services/MedicoService";
+import { updatePassword } from "../../Src/Services/AuthService";
 import { listarConsultorios } from "../../Src/Services/ConsultorioService";
 import { listarEspecialidades } from "../../Src/Services/EspecialidadesService";
 import { useAppContext } from "../Configuracion/AppContext";
@@ -23,9 +26,9 @@ export default function EditarMedico() {
   const route = useRoute();
 
   const medico = route.params?.medico;
-       const { colors, texts } = useAppContext();
+       const { colors, texts, userRole } = useAppContext();
 
-  const [Nombre, setNombre] = useState(medico ? medico.Nombre : "");
+  const [Nombre, setNombre] = useState(medico ? medico.Nombre ||medico.nombre : "");
   const [Apellido, setApellido] = useState(medico ? medico.Apellido : "");
   const [Documento, setDocumento] = useState(medico ? medico.Documento : "");
   const [Telefono, setTelefono] = useState(medico ? medico.Telefono : "");
@@ -65,7 +68,14 @@ export default function EditarMedico() {
   }, []);
 
   const handleGuardar = async () => {
-    if (!Nombre || !Apellido || !Documento || !Telefono || !Email || !idConsultorio || !idEspecialidad) {
+    const camposRequeridos = [Nombre, Apellido, Documento, Telefono, Email, idConsultorio, idEspecialidad];
+    if (!esEdicion) {
+      camposRequeridos.push(Password);
+    }
+
+   
+
+    if (camposRequeridos.some(campo => !campo || campo === "")) {
       Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
     }
@@ -80,26 +90,47 @@ export default function EditarMedico() {
           Documento,
           Telefono,
           Email,
-          Password,
           idConsultorio,
           idEspecialidad,
         });
+
+        // Si se cambió la contraseña (solo para administradores), actualizarla por separado
+        if (Password && userRole === 'administrador') {
+          try {
+            const passwordResult = await updatePassword(Password);
+            if (!passwordResult.success) {
+              console.log("Advertencia: problema con la contraseña:", passwordResult.message);
+            }
+          } catch (passwordError) {
+            console.log("Error silencioso al actualizar contraseña:", passwordError);
+          }
+        }
       } else {
-        result = await crearMedico({
+        const medicoData = {
           Nombre,
           Apellido,
           Documento,
           Telefono,
           Email,
-          Password,
           idConsultorio,
           idEspecialidad,
-        });
+        };
+
+        // Incluir contraseña cuando se crea un médico
+        if (Password) {
+          medicoData.Password = Password;
+        }
+
+        result = await crearMedico(medicoData);
       }
 
       if (result.success) {
         Alert.alert("Éxito", esEdicion ? "Médico actualizado" : "Médico creado correctamente");
-        navegation.goBack();
+        if (esEdicion) {
+          navegation.goBack({ updated: true });
+        } else {
+          navegation.goBack();
+        }
       } else {
         Alert.alert(esEdicion ? "Error al editar el médico" : "Error al crear el médico", JSON.stringify(result.message));
       }
@@ -156,14 +187,16 @@ export default function EditarMedico() {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry
-          value={Password}
-          onChangeText={setPassword}
-          editable={!loading}
-        />
+        {!esEdicion && (
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            secureTextEntry
+            value={Password}
+            onChangeText={setPassword}
+            editable={!loading}
+          />
+        )}
         <View style={styles.pickerContainer}>
           <Text style={styles.label}>Consultorio</Text>
           <Picker
@@ -172,7 +205,7 @@ export default function EditarMedico() {
             style={styles.picker}
           >
             <Picker.Item label="Selecciona un consultorio" value="" />
-            {consultorios.map((consultorio) => (
+            {consultorios && consultorios.length > 0 && consultorios.map((consultorio) => (
               <Picker.Item
                 key={consultorio.id}
                 label={`${consultorio.nombre || consultorio.Nombre || consultorio.name} (${consultorio.id})`}
@@ -190,7 +223,7 @@ export default function EditarMedico() {
             style={styles.picker}
           >
             <Picker.Item label="Selecciona una especialidad" value="" />
-            {especialidades.map((especialidad) => (
+            {especialidades && especialidades.length > 0 && especialidades.map((especialidad) => (
               <Picker.Item
                 key={especialidad.id}
                 label={`${especialidad.nombre || especialidad.Nombre || especialidad.name} (${especialidad.id})`}

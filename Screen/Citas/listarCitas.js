@@ -1,34 +1,67 @@
 import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, StyleSheet } from "react-native";
 import { listarCitas, eliminarCita } from "../../Src/Services/CitasService";
+import { listarPacientes } from "../../Src/Services/PacienteService";
+import { listarMedicos } from "../../Src/Services/MedicoService";
+import { listarRecepcionistas } from "../../Src/Services/RecepcionistaService";
 import { useNavigation } from "@react-navigation/native";
 import CitaCard from "../../components/CitaCard";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../Configuracion/AppContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ListarCitas() {
   const [citas, setCitas] = useState([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const { colors, texts, userRole, userId } = useAppContext();
+  const [pacientes, setPacientes] = useState([]);
+  const [medicos, setMedicos] = useState([]);
+  const [recepcionistas, setRecepcionistas] = useState([]);
 
   const handleCitas = async () => {
     setLoading(true);
     try {
-      const result = await listarCitas();
-      if (result.success) {
-        let filteredCitas = result.data;
+      // Cargar listas de pacientes, médicos y recepcionistas
+      const [citasResult, pacientesResult, medicosResult, recepcionistasResult] = await Promise.all([
+        listarCitas(),
+        listarPacientes(),
+        listarMedicos(),
+        listarRecepcionistas()
+      ]);
+
+      if (citasResult.success) {
+        let filteredCitas = citasResult.data;
         if (userRole === 'paciente') {
-          filteredCitas = result.data.filter(cita => cita.idPaciente == parseInt(userId));
+          filteredCitas = citasResult.data.filter(cita => cita.idPaciente == parseInt(userId));
         } else if (userRole === 'medico') {
-          filteredCitas = result.data; // Asumir que el backend filtra las citas del médico
+           filteredCitas = citasResult.data;
+          // filteredCitas = citasResult.data.filter(cita => cita.idMedico == parseInt(userId));
+        } else if (userRole === 'recepcionista') {
+          // Recepcionista ve todas las citas
+          filteredCitas = citasResult.data;
         }
         // Admin ve todas
         setCitas(filteredCitas);
+
+        // Guardar las listas para pasar al detalle
+        if (pacientesResult.success) setPacientes(pacientesResult.data);
+        if (medicosResult.success) setMedicos(medicosResult.data);
+        if (recepcionistasResult.success) setRecepcionistas(recepcionistasResult.data);
       } else {
-        Alert.alert("Error", result.message || "No se pudieron cargar las citas");
+        if (citasResult.message && citasResult.message.error === "Token inválido") {
+          Alert.alert("Sesión expirada", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+          // Aquí podrías redirigir al login
+        } else {
+          Alert.alert("Error", citasResult.message || "No se pudieron cargar las citas");
+        }
       }
     } catch (error) {
-      Alert.alert("Error", "No se pudieron cargar las citas");
+      if (error.response && error.response.status === 401) {
+        Alert.alert("Sesión expirada", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+        // Aquí podrías redirigir al login
+      } else {
+        Alert.alert("Error", "No se pudieron cargar las citas");
+      }
     } finally {
       setLoading(false);
     }
@@ -91,7 +124,12 @@ export default function ListarCitas() {
             cita={item}
             onEdit={() => handleEditar(item)}
             onDelete={() => handleEliminar(item.id)}
-            onPress={() => navigation.navigate("DetalleCita", { cita: item })}
+            onPress={() => navigation.navigate("DetalleCita", {
+              cita: item,
+              pacientes: pacientes,
+              medicos: medicos,
+              recepcionistas: recepcionistas
+            })}
           />
         )}
         ListEmptyComponent={<Text style={[styles.empty, { color: colors.text }]}>{texts.noAppointments}</Text>}

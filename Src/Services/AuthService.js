@@ -38,37 +38,25 @@ export const registerUser = async (userData) => {
 
     let response;
     if (roles === 'paciente') {
-      const regResult = await api.post('/registrar', userData);
-      if (regResult.success) {
-        const userId = regResult.data.id;
-        response = await crearPaciente({ ...data, idUsuario: userId });
-      } else {
-        response = regResult;
-      }
+      response = await api.post('/registrar', userData);
+      const userId = response.data.id;
+      const pacienteResult = await crearPaciente({ ...data, idUsuario: userId });
+      console.log("Paciente creado:", pacienteResult);
     } else if (roles === 'medico') {
-      const regResult = await api.post('/registrar', userData);
-      if (regResult.success) {
-        const userId = regResult.data.id;
-        response = await crearMedico({ ...data, idUsuario: userId });
-      } else {
-        response = regResult;
-      }
+      response = await api.post('/registrar', userData);
+      const userId = response.data.id;
+      const medicoResult = await crearMedico({ ...data, idUsuario: userId, password: userData.password });
+      console.log("Médico creado:", medicoResult);
     } else if (roles === 'administrador') {
-      const regResult = await api.post('/registrar', userData);
-      if (regResult.success) {
-        const userId = regResult.data.id;
-        response = await crearAdministrador({ ...data, idUsuario: userId });
-      } else {
-        response = regResult;
-      }
+      response = await api.post('/registrar', userData);
+      const userId = response.data.id;
+      const adminResult = await crearAdministrador({ ...data, idUsuario: userId, password: userData.password });
+      console.log("Administrador creado:", adminResult);
     } else if (roles === 'recepcionista') {
-      const regResult = await api.post('/registrar', userData);
-      if (regResult.success) {
-        const userId = regResult.data.id;
-        response = await crearRecepcionista({ ...data, idUsuario: userId });
-      } else {
-        response = regResult;
-      }
+      response = await api.post('/registrar', userData);
+      const userId = response.data.id;
+      // El backend ya maneja la creación del recepcionista en /registrar
+      console.log("Recepcionista registrado exitosamente");
     } else {
       throw new Error("Rol no válido");
     }
@@ -96,5 +84,44 @@ export const logoutUser = async () => {
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
     return { success: false, message: "Error al cerrar sesión" };
+  }
+};
+
+export const updatePassword = async (newPassword) => {
+  try {
+    const response = await api.put('/actualizarUsuario', { password: newPassword });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error al actualizar contraseña:", error.response ? error.response.data : error.message);
+    return {
+      success: false,
+      message: error.response ? error.response.data : "Error de conexión",
+    };
+  }
+};
+
+export const requestPasswordReset = async (email) => {
+  try {
+    const response = await api.post('/recuperarContrasena', { email });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error al solicitar recuperación de contraseña:", error.response ? error.response.data : error.message);
+    return {
+      success: false,
+      message: error.response ? error.response.data : "Error de conexión",
+    };
+  }
+};
+
+export const resetPassword = async (code, newPassword) => {
+  try {
+    const response = await api.post('/resetPassword', { code, newPassword });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error al restablecer contraseña:", error.response ? error.response.data : error.message);
+    return {
+      success: false,
+      message: error.response ? error.response.data : "Error de conexión",
+    };
   }
 };

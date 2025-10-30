@@ -30,6 +30,7 @@ export const eliminarRecepcionista = async (id) => {
 export const crearRecepcionista = async (data) => {
   try {
     const response = await api.post("/CrearResepcionistas", data);
+    console.log("Respuesta de crear recepcionista:", response.data);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error al crear el recepcionista:", error.response ? error.response.data : error.message);

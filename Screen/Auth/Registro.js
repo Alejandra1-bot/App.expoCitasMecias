@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { loginUser, registerUser } from '../../Src/Services/AuthService';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+// import { Picker } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+
 import BottonComponent from '../../components/BottonComponents';
 
 export default function Registro({ navigation }) {
@@ -15,11 +17,12 @@ export default function Registro({ navigation }) {
   const [RH, setRh] = useState('');
   const [Nacionalidad, setNacionalidad] = useState('');
   const [password, setPassword] = useState('');
-  const [roles, setRol] = useState('');
+  const [roles, setRol] = useState('paciente');
   const [idConsultorio, setIdConsultorio] = useState('');
   const [idEspecialidad, setIdEspecialidad] = useState('');
   const [Turno, setTurno] = useState('');
     const [loading, setLoading] = useState(false);
+  const [accessCode, setAccessCode] = useState('');
 const handleRegister = async () => {
   // Validación de contraseña
   if (password.length < 8) {
@@ -31,6 +34,24 @@ const handleRegister = async () => {
   if (!Email.endsWith('@gmail.com')) {
     Alert.alert("Error", "El correo electrónico debe terminar con @gmail.com.");
     return;
+  }
+
+  // Validación de códigos de acceso para roles restringidos
+  const validCodes = {
+    administrador: 'ADMIN2025',
+    medico: 'MEDICO2025',
+    recepcionista: 'RECEP2025'
+  };
+
+  if (roles === 'administrador' || roles === 'medico' || roles === 'recepcionista') {
+    if (!accessCode) {
+      Alert.alert("Error", `Se requiere un código de acceso único para el rol de ${roles === 'administrador' ? 'Administrador' : roles === 'medico' ? 'Médico' : 'Recepcionista'}.`);
+      return;
+    }
+    if (accessCode !== validCodes[roles]) {
+      Alert.alert("Error", `Código de acceso incorrecto para el rol de ${roles === 'administrador' ? 'Administrador' : roles === 'medico' ? 'Médico' : 'Recepcionista'}.`);
+      return;
+    }
   }
 
   const requiredFields = roles === 'administrador'
@@ -201,13 +222,22 @@ const handleRegister = async () => {
             onValueChange={(itemValue) => setRol(itemValue)}
             style={styles.picker}
           >
-            <Picker.Item label="Selecciona un rol" value="" />
             <Picker.Item label="Paciente" value="paciente" />
             <Picker.Item label="Médico" value="medico" />
-            <Picker.Item label="Administrador" value="administrador" />
             <Picker.Item label="Recepcionista" value="recepcionista" />
+            <Picker.Item label="Administrador" value="administrador" />
           </Picker>
         </View>
+
+        {(roles === 'administrador' || roles === 'medico' || roles === 'recepcionista') && (
+          <TextInput
+            style={styles.input}
+            placeholder="Código de acceso"
+            secureTextEntry
+            value={accessCode}
+            onChangeText={setAccessCode}
+          />
+        )}
 
         {roles === 'medico' && (
           <>

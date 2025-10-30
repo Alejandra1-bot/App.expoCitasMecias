@@ -6,6 +6,7 @@ import { createNativeStackNavigator} from '@react-navigation/native-stack'
  import EspecialidadesStack from './EspecialidadesStack';
  import RecepcionistasStack from './RecepcionistasStack';
  import CitasStack from './CitasStack';
+ import AdministradoresStack from './AdministradoresStack';
 
 
 const  Stack = createNativeStackNavigator();
@@ -49,7 +50,13 @@ export default function InicioStack(){
         />
            <Stack.Screen
             name="CitasFlow"
-            component={CitasStack}   
+            component={CitasStack}
+            options={{ headerShown: false }}
+        />
+
+           <Stack.Screen
+            name="AdministradoresFlow"
+            component={AdministradoresStack}
             options={{ headerShown: false }}
         />
         </Stack.Navigator>

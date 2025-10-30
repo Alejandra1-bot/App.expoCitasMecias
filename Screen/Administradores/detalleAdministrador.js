@@ -3,41 +3,37 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
-export default function DetallePaciente() {
+export default function DetalleAdministrador() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { paciente } = route.params; // Recibe el paciente enviado desde ListarPacientes
+  const { administrador } = route.params;
 
   return (
     <ScrollView style={styles.container}>
       {/* Encabezado */}
       <View style={styles.header}>
-        <Ionicons name="person-circle-outline" size={80} color="#fff" />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>
-          {paciente.Nombre} {paciente.Apellido}
+          {administrador.Nombre} {administrador.Apellido}
         </Text>
-        <Text style={styles.headerSub}>{paciente.Documento}</Text>
+        <View style={styles.placeholder} />
       </View>
 
       {/* Información */}
       <View style={styles.infoBox}>
+        <Text style={styles.label}>📄 Documento:</Text>
+        <Text style={styles.value}>{administrador.Documento}</Text>
+
         <Text style={styles.label}>📞 Teléfono:</Text>
-        <Text style={styles.value}>{paciente.Telefono}</Text>
+        <Text style={styles.value}>{administrador.Telefono}</Text>
 
-        <Text style={styles.label}>📧 Email:</Text>
-        <Text style={styles.value}>{paciente.Email}</Text>
-
-        <Text style={styles.label}>🎂 Fecha de Nacimiento:</Text>
-        <Text style={styles.value}>{paciente.Fecha_nacimiento}</Text>
-
-        <Text style={styles.label}>⚧ Género:</Text>
-        <Text style={styles.value}>{paciente.Genero}</Text>
-
-        <Text style={styles.label}>🩸 Grupo RH:</Text>
-        <Text style={styles.value}>{paciente.RH}</Text>
-
-        <Text style={styles.label}>🌎 Nacionalidad:</Text>
-        <Text style={styles.value}>{paciente.Nacionalidad}</Text>
+        <Text style={styles.label}>📧 Correo:</Text>
+        <Text style={styles.value}>{administrador.Email}</Text>
       </View>
 
       {/* Botón volver */}
@@ -52,20 +48,28 @@ export default function DetallePaciente() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F9FAFB" },
   header: {
-    backgroundColor: "#2563EB",
-    paddingVertical: 30,
+    backgroundColor: "#10B981",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
     alignItems: "center",
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     marginBottom: 20,
+    elevation: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  backButton: {
+    padding: 8,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
-    marginTop: 8,
   },
-  headerSub: { fontSize: 16, color: "#E5E7EB", marginTop: 4 },
+  placeholder: {
+    width: 40, // Para balancear el botón de retroceso
+  },
   infoBox: {
     backgroundColor: "#fff",
     margin: 16,

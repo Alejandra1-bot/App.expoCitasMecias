@@ -1,5 +1,7 @@
 import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, StyleSheet,ScrollView  } from "react-native";
 import { listarMedicos, eliminarMedico } from "../../Src/Services/MedicoService";
+import { listarConsultorios } from "../../Src/Services/ConsultorioService";
+import { listarEspecialidades } from "../../Src/Services/EspecialidadesService";
 import { useNavigation } from "@react-navigation/native";
 import MedicoCard from "../../components/MedicoCard";
 import { useEffect, useState } from "react";
@@ -8,18 +10,27 @@ import { useAppContext } from "../Configuracion/AppContext";
 export default function ListarMedicos() {
        const { colors, texts, userRole } = useAppContext();
 
-   const [medicos, setMedicos] = useState([]);
-   const navegation = useNavigation();
-   const [loading, setLoading] = useState(false);
+    const [medicos, setMedicos] = useState([]);
+    const navegation = useNavigation();
+    const [loading, setLoading] = useState(false);
+    const [consultorios, setConsultorios] = useState([]);
+    const [especialidades, setEspecialidades] = useState([]);
 
   const handleMedicos = async () => {
     setLoading(true);
     try {
-      const result = await listarMedicos();
-      if (result.success) {
-        setMedicos(result.data);
+      const [medicosResult, consultoriosResult, especialidadesResult] = await Promise.all([
+        listarMedicos(),
+        listarConsultorios(),
+        listarEspecialidades()
+      ]);
+
+      if (medicosResult.success) {
+        setMedicos(medicosResult.data);
+        if (consultoriosResult.success) setConsultorios(consultoriosResult.data);
+        if (especialidadesResult.success) setEspecialidades(especialidadesResult.data);
       } else {
-         Alert.alert("Error", JSON.stringify(error.message));
+         Alert.alert("Error", JSON.stringify(medicosResult.message));
       }
     } catch (error) {
       Alert.alert("Error", "No se pudieron cargar los médicos");
@@ -88,12 +99,17 @@ export default function ListarMedicos() {
             onEdit={() => handleEditar(item)}
             onDelete={() => handleEliminar(item.id)}
             userRole={userRole}
+            onPress={() => navegation.navigate("DetalleMedico", {
+              medico: item,
+              consultorios: consultorios,
+              especialidades: especialidades
+            })}
           />
         )}
         ListEmptyComponent={<Text style={styles.empty}>No hay Médicos Registrados.</Text>}
       />
 
-      {userRole === 'administrador' && (
+      {(userRole === 'administrador' || userRole === 'recepcionista') && (
         <TouchableOpacity style={styles.botonCrear} onPress={handleCrear}>
           <Text style={styles.textBotton}>+Nuevo Médico</Text>
         </TouchableOpacity>

@@ -9,8 +9,8 @@ export default function CitaCard({ cita, pacientes = [], medicos = [], recepcion
   
 
   const paciente = pacientes.find(p => p.id == cita.idPaciente);
-  const medico = medicos.find(m => String(m.id) === String(cita.idMedico));
-  const recepcionista = recepcionistas.find(r => String(r.id) === String(cita.idRecepcionista));
+  const medico = medicos.find(m => m.id == cita.idMedico);
+  const recepcionista = recepcionistas.find(r => r.id == cita.idResepcionista || r.id == cita.idRecepcionista);
   const consultorio = consultorios.find(c => c.id == medico?.idConsultorio);
   const especialidad = especialidades.find(e => e.id == medico?.idEspecialidad);
 
@@ -44,17 +44,17 @@ export default function CitaCard({ cita, pacientes = [], medicos = [], recepcion
 
           <View style={styles.row}>
             <Ionicons name="person-outline" size={16} color={colors.tabBarInactive} />
-            <Text style={[styles.detalle, { color: colors.text }]}> Paciente: {paciente ? `${paciente.name || paciente.Nombre} ${paciente.apellido || paciente.Apellido}` : `ID: ${cita.idPaciente}`}</Text>
+            <Text style={[styles.detalle, { color: colors.text }]}> Paciente: {paciente ? `${paciente.nombre || paciente.Nombre} ${paciente.apellido || paciente.Apellido}` : `ID: ${cita.idPaciente}`}</Text>
           </View>
 
           <View style={styles.row}>
             <Ionicons name="medkit-outline" size={16} color={colors.tabBarInactive} />
-            <Text style={[styles.detalle, { color: colors.text }]}> Médico: {medico ? `${medico.nombre || medico.Nombre || medico.name}` : `ID: ${cita.idMedico}`}</Text>
+            <Text style={[styles.detalle, { color: colors.text }]}> Médico: {medico ? `${medico.nombre || medico.Nombre} ${medico.apellido || medico.Apellido}` : `ID: ${cita.idMedico}`}</Text>
           </View>
 
           <View style={styles.row}>
             <Ionicons name="people-outline" size={16} color={colors.tabBarInactive} />
-            <Text style={[styles.detalle, { color: colors.text }]}> Recepcionista: {cita.idResepcionista}</Text>
+            <Text style={[styles.detalle, { color: colors.text }]}> Recepcionista: {recepcionista ? `${recepcionista.nombre || recepcionista.Nombre} ${recepcionista.apellido || recepcionista.Apellido}` : `ID: ${cita.idResepcionista}`}</Text>
           </View>
 
 

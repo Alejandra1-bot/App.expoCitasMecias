@@ -11,14 +11,12 @@ import {
 } from "react-native";
 import BottonComponent from "../../components/BottonComponents";
 import { useState } from "react";
-import { loginUser } from "../../Src/Services/AuthService";
-import { useAppContext } from "../Configuracion/AppContext";
 
-export default function Login({ navigation }) {
-  const [Email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function VerificarCodigo({ navigation, route }) {
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAppContext();
+
+  const { email } = route.params || {};
 
   const theme = useColorScheme(); // "light" | "dark"
 
@@ -40,30 +38,17 @@ export default function Login({ navigation }) {
         inputBg: "#F8FAFC",
       };
 
-  const handleLogin = async () => {
-    setLoading(true);
-    try {
-      const result = await loginUser(Email, password);
-      if (result.success) {
-        const token = result.token;
-        const role = result.role || 'paciente'; // default if not provided
-        const userId = result.userId;
-        await login(token, role, userId);
-        Alert.alert("Éxito", "Inicio de sesión exitoso");
-      } else {
-        Alert.alert(
-          "Error de Login",
-          typeof result.message === "string"
-            ? result.message
-            : result.message?.message || JSON.stringify(result.message) || "Ocurrió un error al iniciar sesión"
-        );
-      }
-    } catch (error) {
-      console.error("Error inesperado en login:", error);
-      Alert.alert("Error", "Ocurrió un error inesperado al intentar iniciar sesión");
-    } finally {
-      setLoading(false);
+  const handleVerifyCode = () => {
+    if (!code) {
+      Alert.alert("Error", "Por favor ingresa el código enviado a tu correo");
+      return;
     }
+    if (code.length !== 6) {
+      Alert.alert("Error", "El código debe tener 6 dígitos");
+      return;
+    }
+    // Navegar a ResetPassword con el código y email
+    navigation.navigate("ResetPassword", { code, email });
   };
 
   return (
@@ -80,54 +65,36 @@ export default function Login({ navigation }) {
         />
 
         {/* Título */}
-        <Text style={[styles.titulo, { color: colors.text }]}>🏥 Citas Médicas</Text>
+        <Text style={[styles.titulo, { color: colors.text }]}> Verificar Código</Text>
         <Text style={[styles.subtitulo, { color: colors.subtext }]}>
-          Accede a tu cuenta para continuar
+          Ingresa el código de 6 dígitos enviado a tu correo electrónico
         </Text>
 
-        {/* Inputs */}
+        {/* Input Código */}
         <TextInput
           style={[
             styles.input,
             { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text },
           ]}
-          placeholder="📧 Correo electrónico"
+          placeholder="🔢 Código de verificación"
           placeholderTextColor={colors.subtext}
-          value={Email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          style={[
-            styles.input,
-            { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text },
-          ]}
-          placeholder="🔒 Contraseña"
-          placeholderTextColor={colors.subtext}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
+          value={code}
+          onChangeText={setCode}
+          keyboardType="numeric"
+          maxLength={6}
           editable={!loading}
         />
 
-              <BottonComponent 
-          title="✅ Iniciar Sesión"  
-          onPress={handleLogin} 
+        <BottonComponent
+          title="✅ Verificar Código"
+          onPress={handleVerifyCode}
           disabled={loading}
-          gradient // este activa el gradiente
+          gradient
         />
 
         <BottonComponent
-          title="¿Olvidaste tu contraseña?"
-          onPress={() => navigation.navigate("RecuperarContrasena")}
-          style={{ backgroundColor: "#FF6B35", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 25 }}
-        />
-
-        <BottonComponent
-          title="¿No tienes cuenta? Regístrate"
-          onPress={() => navigation.navigate("Registro")}
+          title="⬅️ Volver"
+          onPress={() => navigation.goBack()}
           style={{ backgroundColor: "#0A2647", paddingVertical: 14, paddingHorizontal: 20, borderRadius: 25 }}
         />
 
@@ -178,5 +145,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 15,
     fontSize: 15,
+    textAlign: "center",
   },
 });

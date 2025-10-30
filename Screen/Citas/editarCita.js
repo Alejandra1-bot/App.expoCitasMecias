@@ -17,6 +17,8 @@ import { crearCita, editarCita } from "../../Src/Services/CitasService";
 import { listarPacientes } from "../../Src/Services/PacienteService";
 import { listarMedicos } from "../../Src/Services/MedicoService";
 import { listarRecepcionistas } from "../../Src/Services/RecepcionistaService";
+import * as Notifications from 'expo-notifications';
+import api from "../../Src/Services/Conexion";
 
 export default function EditarCita() {
   const navigation = useNavigation();
@@ -86,9 +88,119 @@ export default function EditarCita() {
 
       if (result.success) {
         Alert.alert("Éxito", esEdicion ? "Cita actualizada" : "Cita creada correctamente");
+
+        // Obtener nombres de paciente, médico y recepcionista
+        const pacienteSeleccionado = pacientes.find(p => String(p.id) === idPaciente);
+        const medicoSeleccionado = medicos.find(m => String(m.id) === idMedico);
+        const recepcionistaSeleccionado = recepcionistas.find(r => String(r.id) === idResepcionista);
+
+        const nombrePaciente = pacienteSeleccionado ?
+          `${pacienteSeleccionado.Nombre || pacienteSeleccionado.name || 'Paciente'} ${pacienteSeleccionado.apellido || pacienteSeleccionado.Apellido || ''}`.trim() :
+          'Paciente';
+
+        const nombreMedico = medicoSeleccionado ?
+          `Dr. ${medicoSeleccionado.nombre || medicoSeleccionado.Nombre || 'Médico'} ${medicoSeleccionado.apellido || medicoSeleccionado.Apellido || ''}`.trim() :
+          'Dr. Médico';
+
+        const nombreRecepcionista = recepcionistaSeleccionado ?
+          `${recepcionistaSeleccionado.nombre || recepcionistaSeleccionado.Nombre || 'Recepcionista'} ${recepcionistaSeleccionado.apellido || recepcionistaSeleccionado.Apellido || ''}`.trim() :
+          'Recepcionista';
+
+        if (!esEdicion) {
+          // Notificación para nueva cita
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "🎉 ¡Cita Médica Confirmada!",
+              body: `📅 Fecha: ${Fecha_cita}\n⏰ Hora: ${Hora}\n👤 Paciente: ${nombrePaciente}\n👨‍⚕️ Médico: ${nombreMedico}\n🏥 Recepcionista: ${nombreRecepcionista}\n📋 Estado: ${Estado}\n\n✅ Tu cita ha sido programada exitosamente`,
+              sound: 'default',
+              priority: Notifications.AndroidNotificationPriority.HIGH,
+              color: '#10B981',
+              vibrate: [0, 250, 250, 250],
+              sticky: false,
+            },
+            trigger: null, // Mostrar inmediatamente
+          });
+        } else {
+          // Notificación para edición de cita (cambio de estado)
+          const estadoAnterior = cita.Estado;
+          const estadoNuevo = Estado;
+
+          if (estadoAnterior !== estadoNuevo) {
+            let tituloNotificacion = "";
+            let colorNotificacion = "";
+            let emojiEstado = "";
+
+            switch (estadoNuevo.toLowerCase()) {
+              case 'confirmada':
+                tituloNotificacion = "✅ Cita Confirmada";
+                colorNotificacion = '#10B981';
+                emojiEstado = "✅";
+                break;
+              case 'cancelada':
+                tituloNotificacion = "❌ Cita Cancelada";
+                colorNotificacion = '#EF4444';
+                emojiEstado = "❌";
+                break;
+              case 'pendiente':
+                tituloNotificacion = "⏳ Cita Pendiente";
+                colorNotificacion = '#F59E0B';
+                emojiEstado = "⏳";
+                break;
+              default:
+                tituloNotificacion = "📝 Cita Actualizada";
+                colorNotificacion = '#3B82F6';
+                emojiEstado = "📝";
+            }
+
+            await Notifications.scheduleNotificationAsync({
+              content: {
+                title: tituloNotificacion,
+                body: `📅 Fecha: ${Fecha_cita}\n⏰ Hora: ${Hora}\n👤 Paciente: ${nombrePaciente}\n👨‍⚕️ Médico: ${nombreMedico}\n${emojiEstado} Nuevo Estado: ${estadoNuevo.charAt(0).toUpperCase() + estadoNuevo.slice(1)}\n\n🔄 Tu cita ha sido actualizada`,
+                sound: 'default',
+                priority: Notifications.AndroidNotificationPriority.HIGH,
+                color: colorNotificacion,
+                vibrate: [0, 250, 250, 250],
+                sticky: false,
+              },
+              trigger: null, // Mostrar inmediatamente
+            });
+
+          }
+
+        }
+
+        // Enviar email de confirmación al paciente (solo para nuevas citas)
+        if (!esEdicion && pacienteSeleccionado?.Email) {
+          try {
+            // Preparar datos para el email
+            const emailData = {
+              email: pacienteSeleccionado.Email,
+              paciente: nombrePaciente,
+              fecha: Fecha_cita,
+              hora: Hora,
+              medico: nombreMedico,
+              recepcionista: nombreRecepcionista,
+              estado: Estado
+            };
+
+            console.log("Datos para enviar email de cita:", emailData);
+
+            // Enviar email al backend
+            const emailResult = await api.post('/enviarEmailCita', emailData);
+            if (emailResult.success) {
+              console.log("Email de confirmación enviado exitosamente");
+            } else {
+              console.error("Error al enviar email:", emailResult.message);
+            }
+
+          } catch (emailError) {
+            // console.error("Error al procesar envío de email:", emailError);
+          }
+        }
+
         navigation.goBack();
       } else {
-       Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar  la cita");  
+       Alert.alert("Error", JSON.stringify(result.message) || "No se pudo guardar  la cita");
       }
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar la cita");
@@ -141,10 +253,10 @@ export default function EditarCita() {
             style={styles.picker}
           >
             <Picker.Item label="Selecciona un paciente" value="" />
-            {pacientes.map((paciente) => (
+            {pacientes && pacientes.length > 0 && pacientes.map((paciente) => (
               <Picker.Item
                 key={paciente.id}
-                label={`${paciente.nombre || paciente.name || 'Sin Nombre'} ${paciente.apellido || paciente.Apellido || 'Sin Apellido'} (${paciente.id})`}
+                label={`${paciente.Nombre || paciente.name || 'Sin Nombre'} ${paciente.apellido || paciente.Apellido || 'Sin Apellido'} (${paciente.id})`}
                 value={String(paciente.id)}
               />
             ))}
@@ -159,7 +271,7 @@ export default function EditarCita() {
             style={styles.picker}
           >
             <Picker.Item label="Selecciona un médico" value="" />
-            {medicos.map((medico) => (
+            {medicos && medicos.length > 0 && medicos.map((medico) => (
               <Picker.Item
                 key={medico.id}
                 label={`${medico.nombre || medico.Nombre || 'Sin Nombre'} ${medico.apellido || medico.Apellido || 'Sin Apellido'} (${medico.id})`}
@@ -177,7 +289,7 @@ export default function EditarCita() {
             style={styles.picker}
           >
             <Picker.Item label="Selecciona un recepcionista" value="" />
-            {recepcionistas.map((recepcionista) => (
+            {recepcionistas && recepcionistas.length > 0 && recepcionistas.map((recepcionista) => (
               <Picker.Item
                 key={recepcionista.id}
                 label={`${recepcionista.nombre || recepcionista.Nombre || 'Sin Nombre'} ${recepcionista.apellido || recepcionista.Apellido || 'Sin Apellido'} (${recepcionista.id})`}

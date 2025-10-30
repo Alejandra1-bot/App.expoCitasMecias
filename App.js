@@ -9,26 +9,25 @@ import FlashMessage from "react-native-flash-message"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
-  // le vamos a decir como vamos a mostrar las notificaciones cuando la app este en primer plano
+  // Configurar cómo mostrar las notificaciones cuando la app esté en primer plano
   useEffect(() => {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
-        shouldShowBanner: true, // muestra notificacion como banner en la parte superior
-
-        shouldPlaySound: true, // nos va a sonar el celular cuando llega la notificacion
+        shouldShowBanner: true, // muestra notificación como banner en la parte superior
+        shouldPlaySound: true, // nos va a sonar el celular cuando llega la notificación
         shouldShowList: true,
-        // shouldSetBadge: false, // No cambia icono de notificaion
+        shouldSetBadge: false, // No cambia icono de notificación
       }),
     });
 
-     const getPermisos = async () => {
-      const { status } = Notifications.requestPermissionsAsync();
+    const getPermisos = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
-        alert('Permisos de notificaciones ');
+        alert('Se necesitan permisos de notificaciones para recibir alertas de citas');
       }
-     }
+    };
 
-     getPermisos();
+    getPermisos();
   }, []);
 
 

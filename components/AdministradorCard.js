@@ -1,15 +1,15 @@
-import { View, Text, Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function MedicoCard({ medico, onEdit, onDelete, userRole, onPress }) {
+export default function AdministradorCard({ administrador, onEdit, onDelete, userRole }) {
   const navigation = useNavigation();
-  const inicial = medico.Nombre ? medico.Nombre.charAt(0).toUpperCase() : "?";
+  const inicial = administrador.Nombre ? administrador.Nombre.charAt(0).toUpperCase() : "?";
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={styles.card}
-      onPress={onPress || (() => navigation.navigate("DetalleMedico", { medico }))}
+      onPress={() => navigation.navigate("DetalleAdministrador", { administrador })}
     >
       {/* Avatar */}
       <View style={styles.avatar}>
@@ -19,37 +19,27 @@ export default function MedicoCard({ medico, onEdit, onDelete, userRole, onPress
       {/* Info */}
       <View style={styles.info}>
         <Text style={styles.nombre}>
-          {medico.Nombre} {medico.Apellido}
+          {administrador.Nombre} {administrador.Apellido}
         </Text>
 
         <View style={styles.row}>
           <Ionicons name="card-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {medico.Documento}</Text>
+          <Text style={styles.detalle}> {administrador.Documento}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="call-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {medico.Telefono}</Text>
+          <Text style={styles.detalle}> {administrador.Telefono}</Text>
         </View>
 
         <View style={styles.row}>
           <Ionicons name="mail-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> {medico.Email}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="business-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> Consultorio ID: {medico.idConsultorio}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Ionicons name="medkit-outline" size={16} color="#555" />
-          <Text style={styles.detalle}> Especialidad ID: {medico.idEspecialidad}</Text>
+          <Text style={styles.detalle}> {administrador.Email}</Text>
         </View>
       </View>
 
       {/* Botones */}
-      {(userRole === 'administrador' || userRole === 'recepcionista') && (
+      {userRole === 'administrador' && (
         <View style={styles.actions}>
           <Pressable
             onPress={onEdit}
@@ -74,7 +64,7 @@ export default function MedicoCard({ medico, onEdit, onDelete, userRole, onPress
           </Pressable>
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

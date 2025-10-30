@@ -3,6 +3,7 @@ import { View,TextInput, TouchableOpacity, Text, StyleSheet, ScrollView, Alert} 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import {crearRecepcionista,editarRecepcionista,} from "../../Src/Services/RecepcionistaService";
+import { updatePassword, registerUser } from "../../Src/Services/AuthService";
 
 export default function EditarRecepcionista() {
   const navegation = useNavigation();
@@ -21,7 +22,7 @@ export default function EditarRecepcionista() {
   const esEdicion = !!recepcionista;
 
   const handleGuardar = async () => {
-    if (!Nombre || !Apellido || !Turno || !Telefono || !Email || !Password) {
+    if (!Nombre || !Apellido || !Turno || !Telefono || !Email) {
       Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
     }
@@ -35,24 +36,41 @@ export default function EditarRecepcionista() {
           Turno,
           Telefono,
           Email,
-          Password,
         });
+
+        // Si se cambió la contraseña, actualizarla por separado
+        if (Password) {
+          const passwordResult = await updatePassword(Password);
+          if (!passwordResult.success) {
+            Alert.alert("Advertencia", "Los datos se actualizaron pero hubo un problema con la contraseña: " + passwordResult.message);
+          }
+        }
       } else {
-        result = await crearRecepcionista({
-          Nombre,
-          Apellido,
-          Turno,
-          Telefono,
-          Email,
-          Password,
-        });
+        // Para crear una nueva recepcionista desde administración, usar registerUser
+        // que guarda en ambas tablas (users y recepcionistas)
+        const userData = {
+          email: Email,
+          password: Password,
+          roles: 'recepcionista',
+          Nombre: Nombre,
+          Apellido: Apellido,
+          Turno: Turno,
+          Telefono: Telefono,
+          Documento: 'N/A', // Campo requerido pero no usado para recepcionistas
+        };
+
+        result = await registerUser(userData);
       }
       if (result.success) {
         Alert.alert(
           "Éxito",
           esEdicion ? "Recepcionista actualizado" : "Recepcionista creado correctamente"
         );
-        navegation.goBack();
+        if (esEdicion) {
+          navegation.goBack({ updated: true });
+        } else {
+          navegation.goBack();
+        }
       } else {
         Alert.alert(
           "Error",
@@ -106,14 +124,16 @@ export default function EditarRecepcionista() {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
-        <TextInput
-          style={styles.input}
-          placeholder=" ** Contraseña"
-          secureTextEntry
-          value={Password}
-          onChangeText={setPassword}
-          editable={!loading}
-        />
+        {!esEdicion && (
+          <TextInput
+            style={styles.input}
+            placeholder=" ** Contraseña"
+            secureTextEntry
+            value={Password}
+            onChangeText={setPassword}
+            editable={!loading}
+          />
+        )}
 
         <TouchableOpacity
           style={styles.button}

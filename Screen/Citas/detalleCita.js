@@ -6,7 +6,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 export default function DetalleCita() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { cita } = route.params; // recibe la cita enviada desde ListarCitas
+  const { cita, pacientes = [], medicos = [], recepcionistas = [] } = route.params; // recibe la cita y listas
 
   return (
     <ScrollView style={styles.container}>
@@ -28,14 +28,29 @@ export default function DetalleCita() {
         <Text style={styles.label}>📌 Estado:</Text>
         <Text style={styles.value}>{cita.Estado}</Text>
 
-        <Text style={styles.label}>🧑 Paciente (ID):</Text>
-        <Text style={styles.value}>{cita.idPaciente}</Text>
+        <Text style={styles.label}>🧑 Paciente:</Text>
+        <Text style={styles.value}>
+          {(() => {
+            const paciente = pacientes.find(p => p.id == cita.idPaciente);
+            return paciente ? `${paciente.nombre || paciente.Nombre} ${paciente.apellido || paciente.Apellido}` : `ID: ${cita.idPaciente}`;
+          })()}
+        </Text>
 
-        <Text style={styles.label}>👨‍⚕️ Médico (ID):</Text>
-        <Text style={styles.value}>{cita.idMedico}</Text>
+        <Text style={styles.label}>👨‍⚕️ Médico:</Text>
+        <Text style={styles.value}>
+          {(() => {
+            const medico = medicos.find(m => m.id == cita.idMedico);
+            return medico ? `${medico.nombre || medico.Nombre} ${medico.apellido || medico.Apellido}` : `ID: ${cita.idMedico}`;
+          })()}
+        </Text>
 
-        <Text style={styles.label}>👩‍💼 Recepcionista (ID):</Text>
-        <Text style={styles.value}>{cita.idResepcionista}</Text>
+        <Text style={styles.label}>👩‍💼 Recepcionista:</Text>
+        <Text style={styles.value}>
+          {(() => {
+            const recepcionista = recepcionistas.find(r => r.id == cita.idResepcionista || r.id == cita.idRecepcionista);
+            return recepcionista ? `${recepcionista.nombre || recepcionista.Nombre} ${recepcionista.apellido || recepcionista.Apellido}` : `ID: ${cita.idResepcionista}`;
+          })()}
+        </Text>
       </View>
 
       {/* Botón volver */}

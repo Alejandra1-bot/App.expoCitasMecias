@@ -6,7 +6,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 export default function DetalleMedico() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { medico } = route.params;
+  const { medico, consultorios = [], especialidades = [] } = route.params;
 
   return (
     <ScrollView style={styles.container}>
@@ -28,10 +28,20 @@ export default function DetalleMedico() {
         <Text style={styles.value}>{medico.Telefono}</Text>
 
         <Text style={styles.label}>📧 Especialidad:</Text>
-        <Text style={styles.value}>{medico.idEspecialidad}</Text>
-    
-        <Text style={styles.label}>📧 Consultorio:</Text>
-        <Text style={styles.value}>{medico.idConsultorio}</Text>
+        <Text style={styles.value}>
+          {(() => {
+            const especialidad = especialidades.find(e => e.id == medico.idEspecialidad);
+            return especialidad ? especialidad.nombre || especialidad.Nombre : `ID: ${medico.idEspecialidad}`;
+          })()}
+        </Text>
+
+        <Text style={styles.label}>🏥 Consultorio:</Text>
+        <Text style={styles.value}>
+          {(() => {
+            const consultorio = consultorios.find(c => c.id == medico.idConsultorio);
+            return consultorio ? consultorio.nombre || consultorio.Nombre : `ID: ${medico.idConsultorio}`;
+          })()}
+        </Text>
 
        
       </View>

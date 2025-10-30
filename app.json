@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "AppCitasMedicas",
-    "slug": "AppCitasMedicas",
+    "name": "MediCare ",
+    "slug": "MediCare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "appcitasmedicas",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,7 +18,18 @@
     },
     "android": {
       "useNextNotificationsApi": true,
-      "intentFilters": [],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "medicarepro",
+              "host": "reset-password"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "permissions": [],
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
@@ -25,7 +37,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.paola_1912.AppCitasMedicas"
+      "package": "com.medicarepro.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
